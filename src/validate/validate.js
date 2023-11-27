@@ -48,12 +48,12 @@ const petValidate = function (data) {
     breed: Joi.string().required(),
     gender: Joi.string()
       .required()
-      .valid(enums.genders.MALE, enums.genders.FEMALE),
+      .valid(enums.genders.MALE, enums.genders.FEMALE, enums.genders.ORTHER),
     color: Joi.string().required(),
     description: Joi.string(),
     images: Joi.array(),
     healthInfo: Joi.string(),
-    level: Joi.string().required.valid(
+    level: Joi.string().required().valid(
       enums.statusPet.NORMAL,
       enums.statusPet.URGENT
     )
