@@ -13,7 +13,7 @@ const roles = {
 const genders = {
   MALE: "MALE",
   FEMALE: "FEMALE",
-  ORTHER: "ORTHER"
+  ORTHER: "ORTHER "
 };
 
 const statusPet = {
