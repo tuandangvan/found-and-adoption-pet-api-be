@@ -7,19 +7,25 @@ import { centerService } from "../../services/centerService.js";
 import { petService } from "../../services/petService.js";
 import ApiError from "../../utils/ApiError.js";
 import { token } from "../../utils/token.js";
+import { validate } from "../../validate/validate.js";
 
 const createPet = async (req, res, next) => {
   try {
     //validate
+    //validate
     const result = validate.petValidate(req.body);
-    if(result.error){
-      res.status(400).send({error: result.error.details[0].message});
+    if (result.error) {
+      res.status(400).send({ error: result.error.details[0].message });
       return;
     }
+
     const getToken = await token.getTokenHeader(req);
     const account = verify(getToken, env.JWT_SECRET);
 
-    const newPet = await petService.createPet({data: req.body, centerId: account.centerId});
+    const newPet = await petService.createPet({
+      data: req.body,
+      centerId: account.centerId
+    });
     const centerUpdate = await centerService.addPetForCenter({
       centerId: account.centerId,
       petId: newPet.id
@@ -86,7 +92,10 @@ const deletePet = async (req, res, next) => {
       throw new ApiError(StatusCodes.NOT_FOUND, ErrorCenter.centerNotExist);
     }
     await petService.deletePet(petId);
-    await centerService.deletePetForCenter({centerId: decodeToken.centerId, petId: petId});
+    await centerService.deletePetForCenter({
+      centerId: decodeToken.centerId,
+      petId: petId
+    });
 
     res.status(StatusCodes.OK).json({
       success: true,

@@ -44,16 +44,17 @@ const infoCenterValidate = function (data) {
 const petValidate = function (data) {
   const schema = Joi.object({
     namePet: Joi.string().required(),
-    species: Joi.string().required(),
+    petType: Joi.string().required(),
     breed: Joi.string().required(),
+    age: Joi.number(),
     gender: Joi.string()
       .required()
-      .valid(enums.genders.MALE, enums.genders.FEMALE),
+      .valid(enums.genders.MALE, enums.genders.FEMALE, enums.genders.ORTHER),
     color: Joi.string().required(),
     description: Joi.string(),
     images: Joi.array(),
-    healthInfo: Joi.string(),
-    level: Joi.string().required.valid(
+    // healthInfo: Joi.string(),
+    level: Joi.string().required().valid(
       enums.statusPet.NORMAL,
       enums.statusPet.URGENT
     )
