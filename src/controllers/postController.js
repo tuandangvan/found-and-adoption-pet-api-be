@@ -226,7 +226,7 @@ const getComment = async (req, res, next) => {
 const getReaction = async (req, res, next) => {
   try {
     const postId = req.params.postId;
-    const post = await postService.findPostById(postId);
+    const post = await postService.findPostByIdReaction(postId);
 
     if (!post) {
       throw new ApiError(StatusCodes.NOT_FOUND, "Not found post!");

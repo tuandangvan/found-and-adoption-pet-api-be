@@ -31,6 +31,10 @@ const deletePostDB = async function (postId) {
 };
 
 const findPostById = async function (postId) {
+  const post = await Post.findOne({ _id: postId });
+  return post;
+};
+const findPostByIdReaction = async function (postId) {
   const post = await Post.findOne({ _id: postId }).populate("reaction.userId").populate("reaction.centerId");
   return post;
 };
@@ -180,5 +184,6 @@ export const postService = {
   updateCommentByCommentId,
   reaction,
   deleteComment,
-  findPostInfoAll
+  findPostInfoAll,
+  findPostByIdReaction
 };
