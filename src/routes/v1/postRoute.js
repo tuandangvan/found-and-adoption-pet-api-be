@@ -22,7 +22,7 @@ router.get("/:postId/comment", authencation, authorizationMiddelware.permission(
 
 //reaction
 router.put("/:postId/reaction", authencation, authorizationMiddelware.permission(PermissionRoles.All), postController.reactionPost);
-// router.get("/reaction/:id", postController.getReaction);
+router.get("/:postId/reaction", authencation, authorizationMiddelware.permission(PermissionRoles.All), postController.getReaction);
 
 
 export const postRoute = router;
