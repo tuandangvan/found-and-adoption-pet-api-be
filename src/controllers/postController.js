@@ -7,6 +7,7 @@ import { postService } from "../services/postService.js";
 import ApiError from "../utils/ApiError.js";
 import { setEnum } from "../utils/setEnum.js";
 import { token } from "../utils/token.js";
+import postModel from "../models/postModel.js";
 
 const addPost = async (req, res, next) => {
   try {
@@ -168,7 +169,40 @@ const getPost = async (req, res, next) => {
 
 const getAllPost = async (req, res, next) => {
   try {
-    const post = await postService.findPostInfoAll();
+    //phân trang
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 15;
+    const totalItems = await postModel.countDocuments({
+      status: enums.statusPost.ACTIVE
+    });
+    const totalPages = Math.ceil(totalItems / limit);
+
+    const post = await postService.findPostInfoAll(page, limit);
+    if (!post) {
+      throw new ApiError(StatusCodes.NOT_FOUND, ErrorPost.postNotFound);
+    }
+    res.status(StatusCodes.OK).json({
+      success: true,
+      data: post,
+      totalPost: post.length,
+      page: `${page}/${totalPages}`
+    });
+  } catch (error) {
+    const customError = new ApiError(StatusCodes.BAD_REQUEST, error.message);
+    next(customError);
+  }
+};
+
+const getAllPostPersonal = async (req, res, next) => {
+  try {
+    const id = req.params.id; //id user or center
+    const getToken = await token.getTokenHeader(req);
+    const decodeToken = verify(getToken, env.JWT_SECRET);
+
+    const post = await postService.findAllPostPersonal(
+      decodeToken?.userId ? decodeToken.userId : decodeToken.centerId,
+      id
+    );
     if (!post) {
       throw new ApiError(StatusCodes.NOT_FOUND, ErrorPost.postNotFound);
     }
@@ -251,5 +285,6 @@ export const postController = {
   changeStatusPost,
   getAllPost,
   getComment,
-  getReaction
+  getReaction,
+  getAllPostPersonal
 };

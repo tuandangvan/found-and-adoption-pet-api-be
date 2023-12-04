@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { enums } from "../enums/enums.js";
 import Post from "../models/postModel.js";
+import { accountService } from "./accountService.js";
 
 const createPost = async function ({ data, userId, centerId }) {
   const post = new Post({
@@ -21,7 +22,10 @@ const updatePost = async function ({ postId, data }) {
 };
 
 const updateStatusPost = async function ({ post, newStatus }) {
-  const postNew = await Post.updateOne({ _id: post.id }, {$set: { status: newStatus }});
+  const postNew = await Post.updateOne(
+    { _id: post.id },
+    { $set: { status: newStatus } }
+  );
   return postNew;
 };
 
@@ -35,7 +39,9 @@ const findPostById = async function (postId) {
   return post;
 };
 const findPostByIdReaction = async function (postId) {
-  const post = await Post.findOne({ _id: postId }).populate("reaction.userId").populate("reaction.centerId");
+  const post = await Post.findOne({ _id: postId })
+    .populate("reaction.userId")
+    .populate("reaction.centerId");
   return post;
 };
 
@@ -52,8 +58,8 @@ const findPostInfoById = async function (postId) {
   return post;
 };
 
-const findPostInfoAll= async function () {
-  const post = await Post.find({status: enums.statusPost.ACTIVE})
+const findPostInfoAll = async function (page, limit) {
+  const post = await Post.find({ status: enums.statusPost.ACTIVE })
     .populate("userId")
     .populate("centerId")
     .populate("userId.accountId")
@@ -61,8 +67,60 @@ const findPostInfoAll= async function () {
     .populate("reaction.userId")
     .populate("reaction.centerId")
     .populate("comments.userId")
-    .populate("comments.centerId");
+    .populate("comments.centerId")
+    .sort({ createdAt: -1 })
+    .skip((page - 1) * limit)
+    .limit(limit);
   return post;
+};
+
+const findAllPostPersonal = async function (idRequest, idNeedFind) {
+  console.log(idNeedFind, idRequest);
+  if (idRequest == idNeedFind) {
+    const post = await Post.find({
+      $or: [
+        {
+          userId: idNeedFind,
+          $or: [
+            { status: enums.statusPost.ACTIVE },
+            { status: enums.statusPost.HIDDEN }
+          ]
+        },
+        {
+          centerId: idNeedFind,
+          $or: [
+            { status: enums.statusPost.ACTIVE },
+            { status: enums.statusPost.HIDDEN }
+          ]
+        }
+      ]
+    })
+      .populate("userId")
+      .populate("centerId")
+      .populate("userId.accountId")
+      .populate("centerId.accountId")
+      .populate("reaction.userId")
+      .populate("reaction.centerId")
+      .populate("comments.userId")
+      .populate("comments.centerId");
+    return post;
+  } else {
+    const post = await Post.find({
+      $or: [
+        { userId: idNeedFind, status: enums.statusPost.ACTIVE },
+        { centerId: idNeedFind, status: enums.statusPost.ACTIVE }
+      ]
+    })
+      .populate("userId")
+      .populate("centerId")
+      .populate("userId.accountId")
+      .populate("centerId.accountId")
+      .populate("reaction.userId")
+      .populate("reaction.centerId")
+      .populate("comments.userId")
+      .populate("comments.centerId");
+    return post;
+  }
 };
 
 const createComment = async function ({ comment, postId, userId, centerId }) {
@@ -142,10 +200,11 @@ const reaction = async function ({ post, userId, centerId }) {
       );
       count += 1;
     }
-  }
-  else{
+  } else {
     if (post.reaction.length > 0)
-      index = post.reaction.findIndex((element) => element.centerId == centerId);
+      index = post.reaction.findIndex(
+        (element) => element.centerId == centerId
+      );
     if (index != null && index != -1) {
       if (post.reaction[index].centerId == centerId) {
         //xóa nếu tồn tại
@@ -185,5 +244,6 @@ export const postService = {
   reaction,
   deleteComment,
   findPostInfoAll,
-  findPostByIdReaction
+  findPostByIdReaction,
+  findAllPostPersonal
 };
