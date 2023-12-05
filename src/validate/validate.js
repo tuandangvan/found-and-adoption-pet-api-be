@@ -22,7 +22,8 @@ const infoUserValidate = function (data) {
       .required()
       .regex(/^\d{10}$/, "10 character"),
     address: Joi.string().required(),
-    experience: Joi.boolean().required()
+    experience: Joi.boolean().required(),
+    aboutMe: Joi.string()
   });
   const result = schema.validate(data);
   return result;
@@ -35,7 +36,8 @@ const infoCenterValidate = function (data) {
       .required()
       .regex(/^\d{10}$/, "10 character"),
     address: Joi.string().required(),
-    avatar: Joi.string()
+    avatar: Joi.string(),
+    aboutMe: Joi.string()
   });
   const result = schema.validate(data);
   return result;

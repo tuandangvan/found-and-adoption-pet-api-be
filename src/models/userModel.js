@@ -45,7 +45,11 @@ const userSchema = mongoose.Schema(
           ref: "Pet"
         }
       }
-    ]
+    ],
+    aboutMe:{
+      type: String,
+      default: "Nothing"
+    }
   },
   {
     timestamps: true

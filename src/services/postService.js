@@ -75,7 +75,6 @@ const findPostInfoAll = async function (page, limit) {
 };
 
 const findAllPostPersonal = async function (idRequest, idNeedFind) {
-  console.log(idNeedFind, idRequest);
   if (idRequest == idNeedFind) {
     const post = await Post.find({
       $or: [
@@ -228,7 +227,6 @@ const reaction = async function ({ post, userId, centerId }) {
       count += 1;
     }
   }
-  //   console.log(count);
   return reaction;
 };
 

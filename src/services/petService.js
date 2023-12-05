@@ -35,12 +35,27 @@ const findAllOfCenter = async function (centerId) {
 };
 
 const findAll = async function () {
-  const pets = await Pet.find().sort({ level: -1 });
+  const pets = await Pet.find({
+    $or: [
+      { statusAdopt: enums.statusAdopt.NOTHING },
+      { statusAdopt: enums.statusAdopt.ADOPTING }
+    ]
+  }).sort({ level: -1 });
   return pets;
 };
 
 const findPetById = async function (id) {
-  const pet = Pet.findOne({ _id: id });
+  const pet = await Pet.findOne({ _id: id });
+  return pet;
+};
+
+const changeStatus = async function (id, status) {
+  const pet = await Pet.updateOne({ _id: id }, { $set: { statusAdopt: status } });
+  return pet;
+};
+
+const changeOwner = async function (id, idOwnwer) {
+  const pet = await Pet.updateOne({ _id: id }, { $set: { foundOwner: idOwnwer } });
   return pet;
 };
 
@@ -50,5 +65,7 @@ export const petService = {
   deletePet,
   findAllOfCenter,
   findPetById,
-  findAll
+  findAll,
+  changeStatus,
+  changeOwner
 };

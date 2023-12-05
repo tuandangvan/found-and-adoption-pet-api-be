@@ -24,7 +24,7 @@ const petSchema = mongoose.Schema(
     },
     gender: {
       type: String,
-      enum: [enums.genders.MALE, enums.genders.FEMALE ],
+      enum: [enums.genders.MALE, enums.genders.FEMALE],
       require: true
     },
     age: {
@@ -33,9 +33,9 @@ const petSchema = mongoose.Schema(
       default: 0
     },
     color: {
-        type: String,
-        required: true,
-        default: "Chưa cập nhật"
+      type: String,
+      required: true,
+      default: "Chưa cập nhật"
     },
     description: {
       type: String,
@@ -61,6 +61,16 @@ const petSchema = mongoose.Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
       default: null
+    },
+    statusAdopt: {
+      type: String,
+      required: true,
+      enum: [
+        enums.statusAdopt.NOTHING,
+        enums.statusAdopt.ADOPTING,
+        enums.statusAdopt.HAS_ONE_OWNER
+      ],
+      default: enums.statusAdopt.NOTHING
     }
   },
   {

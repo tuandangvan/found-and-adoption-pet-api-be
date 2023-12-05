@@ -42,8 +42,27 @@ const setStatusPost = async function (status) {
     next(customError);
   }
 };
+
+const setStatusAdopt = async function (status) {
+  try {
+    if (status == "NOTHING") return enums.statusAdopt.NOTHING;
+    else if (status == "ADOPTING") return enums.statusAdopt.ADOPTING;
+    else if(status=="HAS_ONE_OWNER") return enums.statusAdopt.HAS_ONE_OWNER;
+    else if(status=="PENDING") return enums.statusAdopt.PENDING;
+    else if(status=="ACCEPTED") return enums.statusAdopt.ACCEPTED;
+    else if(status=="CANCELLED") return enums.statusAdopt.CANCELLED;
+
+  } catch (error) {
+    const customError = new ApiError(
+      StatusCodes.UNPROCESSABLE_ENTITY,
+      error.message
+    );
+    next(customError);
+  }
+};
 export const setEnum = {
   setGender,
   setLevelPet,
-  setStatusPost
+  setStatusPost,
+  setStatusAdopt
 };

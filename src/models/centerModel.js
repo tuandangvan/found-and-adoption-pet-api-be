@@ -26,6 +26,10 @@ const centerSchema = mongoose.Schema(
       required: true,
       default: "https://res.cloudinary.com/dfaea99ew/image/upload/v1698469989/a1rstfzd5ihov6sqhvck.jpg"
     },
+    aboutMe:{
+      type: String,
+      default: "Nothing"
+    },
     petIds: [{ 
         type: Schema.Types.ObjectId, 
         ref: "Pet" 
