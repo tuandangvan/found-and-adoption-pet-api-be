@@ -135,10 +135,24 @@ const getAllPetOfCenterPermission = async (req, res, next) => {
   }
 };
 
+const getAllPet = async (req, res, next) => {
+  try {
+    const pets = await petService.findAll();
+    res.status(StatusCodes.OK).json({
+      success: true,
+      data: pets
+    });
+  } catch (error) {
+    const customError = new ApiError(StatusCodes.BAD_REQUEST, error.message);
+    next(customError);
+  }
+};
+
 export const petController = {
   createPet,
   getAllPetOfCenter,
   updatePet,
   deletePet,
-  getAllPetOfCenterPermission
+  getAllPetOfCenterPermission,
+  getAllPet
 };

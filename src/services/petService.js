@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 import Pet from "../models/petModel.js";
 import { setEnum } from "../utils/setEnum.js";
+import { enums } from "../enums/enums.js";
 
-const createPet = async function ({data, centerId}) {
+const createPet = async function ({ data, centerId }) {
   data.centerId = centerId;
   data.level = await setEnum.setLevelPet(data.level);
   data.gender = await setEnum.setGender(data.gender);
@@ -29,12 +30,17 @@ const deletePet = async function (id) {
 };
 
 const findAllOfCenter = async function (centerId) {
-  const pets = await Pet.find({centerId: centerId});
+  const pets = await Pet.find({ centerId: centerId });
+  return pets;
+};
+
+const findAll = async function () {
+  const pets = await Pet.find().sort({ level: -1 });
   return pets;
 };
 
 const findPetById = async function (id) {
-  const pet = Pet.findOne({_id: id});
+  const pet = Pet.findOne({ _id: id });
   return pet;
 };
 
@@ -43,5 +49,6 @@ export const petService = {
   updatePet,
   deletePet,
   findAllOfCenter,
-  findPetById
+  findPetById,
+  findAll
 };
