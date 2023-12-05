@@ -9,7 +9,7 @@ const router = express.Router();
 router.post("/", authencation, authorizationMiddelware.permission(PermissionRoles.onlyCenter), petController.createPet);
 router.put("/:petId",authencation, authorizationMiddelware.permission(PermissionRoles.onlyCenter), petController.updatePet);
 router.delete("/:petId",authencation, authorizationMiddelware.permission(PermissionRoles.onlyCenter), petController.deletePet);
-router.get("/", authencation, authorizationMiddelware.permission(PermissionRoles.onlyCenter), petController.getAllPetOfCenter);
+router.get("/", authencation, authorizationMiddelware.permission(PermissionRoles.All), petController.getAllPetOfCenter);
 router.get("/:centerId", authencation, authorizationMiddelware.permission(PermissionRoles.All), petController.getAllPetOfCenterPermission);
 
 export const petRoute = router;
