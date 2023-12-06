@@ -17,6 +17,9 @@ const adoption = async (req, res, next) => {
     if (!pet) {
       throw new ApiError(StatusCodes.NOT_FOUND, ErrorPet.petNotFound);
     }
+    if(pet.statusAdopt == enums.statusAdopt.HAS_ONE_OWNER){
+      throw new ApiError(StatusCodes.NOT_ACCEPTABLE, ErrorPet.petHasOwner);
+    }
     const getToken = await token.getTokenHeader(req);
     const decodeToken = verify(getToken, env.JWT_SECRET);
     const adopt = await adoptService.findAdoptUserCancel(
@@ -74,8 +77,23 @@ const adoptionStatusAdopt = async (req, res, next) => {
       decodeToken.centerId &&
       adopt.statusAdopt == enums.statusAdopt.PENDING
     ) {
-      await petService.changeOwner(adopt.petId, adopt.userId);
+      //find adopts of a pet
+      const adopts = await adoptService.findByPetIdPENDING_ExceptUserSelect(
+        adopt.petId,
+        adopt.userId
+      );
+      if (adopts) {
+        //cancelled adopt orther with reason has been adopted
+        adopts.forEach(async (adoptItem) => {
+          await adoptService.changeStatus(
+            adoptItem.id,
+            enums.statusAdopt.CANCELLED
+          );
+          await adoptService.cancelledReason(adoptItem.id, true, 'Has been adopted');
+        });
+      }
 
+      await petService.changeOwner(adopt.petId, adopt.userId);
       await petService.changeStatus(
         adopt.petId,
         enums.statusAdopt.HAS_ONE_OWNER
@@ -87,11 +105,12 @@ const adoptionStatusAdopt = async (req, res, next) => {
         message: "The request has been accepted!"
       });
     } else if (
+      //center cancelled
       status == enums.statusAdopt.CANCELLED &&
       decodeToken.centerId &&
       adopt.statusAdopt == enums.statusAdopt.PENDING
     ) {
-      await petService.changeStatus(adopt.petIdnums.statusAdopt.NOTHING);
+      await petService.changeStatus(adopt.petId, enums.statusAdopt.NOTHING);
       await adoptService.changeStatus(adopt.id, enums.statusAdopt.CANCELLED);
       await adoptService.cancelledReason(adopt.id, true, reason);
       res.status(StatusCodes.OK).json({
@@ -99,6 +118,7 @@ const adoptionStatusAdopt = async (req, res, next) => {
         message: "Cancel adoption successfully!"
       });
     } else if (
+      //user cancelled
       status == enums.statusAdopt.CANCELLED &&
       decodeToken.userId &&
       adopt.statusAdopt == enums.statusAdopt.PENDING
@@ -129,7 +149,7 @@ const getAdoptCenter = async (req, res, next) => {
     const centerId = decodeToken.centerId;
     const statusAdoption = req.query.status;
 
-    const adopts = await adoptService.findAdoptCenterByCenterIdStatus(
+    const adopts = await adoptService.find_show_AdoptCenterByCenterIdStatus(
       centerId,
       statusAdoption
     );
@@ -150,7 +170,7 @@ const getAdoptUser = async (req, res, next) => {
     const userId = decodeToken.userId;
     const statusAdoption = req.query.status;
 
-    const adopts = await adoptService.findAdoptCenterByUserIdStatus(
+    const adopts = await adoptService.find_show_AdoptCenterByUserIdStatus(
       userId,
       statusAdoption
     );

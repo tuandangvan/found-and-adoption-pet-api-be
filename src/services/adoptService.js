@@ -53,7 +53,7 @@ const findAdoptUserCancel = async function (userId, petId) {
   return adopt;
 };
 
-const findAdoptCenterByCenterIdStatus = async function (centerId, statusAdopt) {
+const find_show_AdoptCenterByCenterIdStatus = async function (centerId, statusAdopt) {
   const adopts = await Adopt.find({
     centerId: centerId,
     statusAdopt: statusAdopt
@@ -61,7 +61,7 @@ const findAdoptCenterByCenterIdStatus = async function (centerId, statusAdopt) {
   return adopts;
 };
 
-const findAdoptCenterByUserIdStatus = async function (userId, statusAdopt) {
+const find_show_AdoptCenterByUserIdStatus = async function (userId, statusAdopt) {
   const adopts = await Adopt.find({
     userId: userId,
     statusAdopt: statusAdopt
@@ -69,12 +69,23 @@ const findAdoptCenterByUserIdStatus = async function (userId, statusAdopt) {
   return adopts;
 };
 
+const findByPetIdPENDING_ExceptUserSelect = async function (petId, userId) {
+  const adopts = await Adopt.find({
+    petId,
+    statusAdopt: "PENDING",
+    userId: {$ne: userId}
+  });
+  console.log(adopts);
+  return adopts;
+}
+
 export const adoptService = {
   createAdopt,
   findAdoptById,
+  findByPetIdPENDING_ExceptUserSelect,
   changeStatus,
   cancelledReason,
   findAdoptUserCancel,
-  findAdoptCenterByCenterIdStatus,
-  findAdoptCenterByUserIdStatus
+  find_show_AdoptCenterByCenterIdStatus,
+  find_show_AdoptCenterByUserIdStatus,
 };
