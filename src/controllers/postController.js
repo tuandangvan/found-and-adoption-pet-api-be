@@ -268,7 +268,7 @@ const getReaction = async (req, res, next) => {
     res.status(StatusCodes.OK).json({
       success: true,
       status: StatusCodes.OK,
-      reaction: post.reaction
+      data: post.reaction
     });
   } catch (error) {
     const customError = new ApiError(StatusCodes.BAD_REQUEST, error.message);

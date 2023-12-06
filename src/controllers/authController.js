@@ -89,7 +89,7 @@ const checkExpireToken = async (req, res, next) => {
       .json({ success: false, message: "Please login!" });
   } catch (error) {
     const customError = new ApiError(
-      StatusCodes.INTERNAL_SERVER_ERROR,
+      StatusCodes.UNAUTHORIZED,
       error.message
     );
     next(customError);
@@ -215,7 +215,7 @@ const signOut = async (req, res, next) => {
     return;
   } catch (error) {
     const customError = new ApiError(
-      StatusCodes.INTERNAL_SERVER_ERROR,
+      StatusCodes.UNAUTHORIZED,
       error.message
     );
     next(customError);
@@ -283,7 +283,7 @@ const reSendEmailAuthencation = async function (req, res, next) {
     });
   } catch (error) {
     const customError = new ApiError(
-      StatusCodes.INTERNAL_SERVER_ERROR,
+      StatusCodes.UNAUTHORIZED,
       error.message
     );
     next(customError);
@@ -318,7 +318,7 @@ const verifyOTP = async (req, res, next) => {
     }
   } catch (error) {
     const customError = new ApiError(
-      StatusCodes.INTERNAL_SERVER_ERROR,
+      StatusCodes.UNAUTHORIZED,
       error.message
     );
     next(customError);

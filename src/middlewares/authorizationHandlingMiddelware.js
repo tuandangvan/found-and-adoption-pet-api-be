@@ -26,22 +26,22 @@ const permission = (permission) => {
     }
 
     if (!permission.includes(data.role)) {
-      return res.status(401).json({ error: "You don't permission!" });
+      return res.status(401).json({success: false, message: "You don't permission!" });
     }
 
     if (centerId) {
       if (!centerId.includes(data.centerId)) {
-        return res.status(401).json({ error: "You don't permission!" });
+        return res.status(401).json({success: false, message: "You don't permission!" });
       }
     } else if (userId) {
       if (!userId.includes(data.userId)) {
-        return res.status(401).json({ error: "You don't permission!" });
+        return res.status(401).json({ success: false, message: "You don't permission!" });
       }
     } else if (petId) {
       const pet = await petService.findPetById(petId);
       const centerIdTemp = pet.centerId.toString();
       if (!centerIdTemp.includes(data.centerId)) {
-        return res.status(401).json({ error: "You don't permission!" });
+        return res.status(401).json({ success: false, message: "You don't permission!" });
       }
     } else if (postId) {
       const post = await postService.findPostById(postId);
@@ -52,11 +52,11 @@ const permission = (permission) => {
       if (commentId == null) {
         if (centerIdTemp) {
           if (!centerIdTemp.includes(data.centerId)) {
-            return res.status(401).json({ error: "You don't permission!" });
+            return res.status(401).json({ success: false, message: "You don't permission!" });
           }
         } else {
           if (!userIdTemp.includes(data.userId)) {
-            return res.status(401).json({ error: "You don't permission!" });
+            return res.status(401).json({ success: false, message: "You don't permission!" });
           }
         }
       } else {
@@ -66,18 +66,18 @@ const permission = (permission) => {
         if (index != -1) {
           if (post.comments[index].userId != null) {
             if (!post.comments[index].userId.toString().includes(data.userId))
-              return res.status(401).json({ error: "You don't permission!" });
+              return res.status(401).json({ success: false, message: "You don't permission!" });
           } else if (post.comments[index].centerId != null)
             if (
               !post.comments[index].centerId.toString().includes(data.centerId)
             )
-              return res.status(401).json({ error: "You don't permission!" });
+              return res.status(401).json({ success: false, message: "You don't permission!" });
         }
       }
     } else if (adoptId) {
       const adopt = await adoptService.findAdoptById(adoptId);
       if(!adopt){
-        return res.status(404).json({ message: ErrorAdopt.adoptNotFound });
+        return res.status(404).json({ success: false, message: ErrorAdopt.adoptNotFound });
       }
       await adopt.populate("petId");
       const centerId = adopt.petId.centerId.toString();
@@ -86,14 +86,14 @@ const permission = (permission) => {
         (!centerId.includes(data.centerId) || data.userId) &&
         req.body.statusAdopt == enums.statusAdopt.ACCEPTED
       ) {
-        return res.status(401).json({ error: "You don't permission!" });
+        return res.status(401).json({ success: false, message: "You don't permission!" });
       } else if (req.body.statusAdopt == enums.statusAdopt.CANCELLED) {
         if (data.userId) {
           if (!userId.includes(data.userId))
-            return res.status(401).json({ error: "You don't permission!" });
+            return res.status(401).json({ success: false, message: "You don't permission!" });
         } else if (data.centerId) {
           if (!centerId.includes(data.centerId))
-            return res.status(401).json({ error: "You don't permission!" });
+            return res.status(401).json({ success: false, message: "You don't permission!" });
         }
       }
     }
