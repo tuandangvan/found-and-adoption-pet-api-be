@@ -41,10 +41,10 @@ const createMessage = async (req, res, next) => {
     await message.populate("sender.userId", "firstName lastName avatar");
     await message.populate("sender.centerId", "name avatar");
 
-    res.status(201).json({ message: message });
+    res.status(201).json({success: true, message: message });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: "Error" });
+    res.status(400).json({success: false, status: "Error" });
   }
 };
 const getMessagesInChat = async (req, res) => {
@@ -60,10 +60,10 @@ const getMessagesInChat = async (req, res) => {
       page,
       limit
     );
-    res.status(200).json({ messages, totalPages });
+    res.status(200).json({success: true, messages, totalPages });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: "Error" });
+    res.status(400).json({success: false, status: "Error" });
   }
 };
 
@@ -76,12 +76,12 @@ const markMessageAsRead = async (req, res) => {
     });
 
     if (!updatedMessage) {
-      return res.status(404).json({ error: "Tin nhắn không tồn tại" });
+      return res.status(404).json({success: true, message: "Tin nhắn không tồn tại" });
     }
-    return res.status(200).json(updatedMessage);
+    return res.status(200).json({success: true, updatedMessage});
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: "Lỗi server" });
+    return res.status(400).json({success: true, message: "Lỗi server" });
   }
 };
 

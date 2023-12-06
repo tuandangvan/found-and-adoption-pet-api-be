@@ -15,7 +15,7 @@ const createPet = async (req, res, next) => {
     //validate
     const result = validate.petValidate(req.body);
     if (result.error) {
-      res.status(400).send({ error: result.error.details[0].message });
+      res.status(400).send({success: false, message: result.error.details[0].message });
       return;
     }
 

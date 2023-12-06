@@ -5,6 +5,7 @@ const uploadSingle = async (req, res, next) => {
   try {
     if (req.file) {
       res.status(StatusCodes.OK).json({
+        success: true,
         message: "Image loaded successfully!",
         url: req.file.path
       });
@@ -24,11 +25,13 @@ const uploadMulti = async (req, res, next) => {
         const images = req.files.map(item => ({url: item.path}))
 
         res.status(StatusCodes.OK).json({
+          success: true,
           message: "Images loaded successfully!",
           images: images
         });
       } else {
         res.status(StatusCodes.REQUEST_TIMEOUT).json({
+          success: false,
           error: "Can not upload photos!"
         });
       }

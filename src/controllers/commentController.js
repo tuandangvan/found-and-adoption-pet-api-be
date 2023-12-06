@@ -36,7 +36,7 @@ const addComment = async (req, res, next) => {
     }
   } catch (error) {
     const customError = new ApiError(
-      StatusCodes.INTERNAL_SERVER_ERROR,
+      StatusCodes.UNAUTHORIZED,
       error.message
     );
     next(customError);
@@ -67,7 +67,7 @@ const updateComment = async (req, res, next) => {
     }
 
   } catch (Error) {
-    next(new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, Error.message));
+    next(new ApiError(StatusCodes.UNAUTHORIZED, Error.message));
   }
 };
 
@@ -103,7 +103,7 @@ const getComment = async (req, res, next) => {
     res.status(StatusCodes.OK).json({
       success: true,
       status: StatusCodes.OK,
-      comments: post.comments
+      data: post.comments
     });
   } catch (error) {
     const customError = new ApiError(StatusCodes.BAD_REQUEST, error.message);

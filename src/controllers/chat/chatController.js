@@ -54,11 +54,13 @@ const createChatBetweenTwoUsers = async (req, res, next) => {
 
     if (existingChat) {
       return res.status(StatusCodes.OK).json({
+        success: true,
         message: "Chat exist!"
       });
     }
     const chat = await chatService.createChat(participants1);
     return res.status(StatusCodes.OK).json({
+      success: true,
       message: "Success!"
     });
   } catch (error) {
@@ -101,7 +103,7 @@ const getChatsForUser = async (req, res) => {
     res.status(200).json({ chats: populatedChats });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: "Error" });
+    res.status(400).json({success: false, status: "Error" });
   }
 };
 

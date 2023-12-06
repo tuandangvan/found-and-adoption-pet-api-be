@@ -12,7 +12,7 @@ const createInfoForCenter = async (req, res, next) => {
     //validate
     const result = validate.infoCenterValidate(req.body);
     if (result.error) {
-      res.status(400).send({ error: result.error.details[0].message });
+      res.status(400).send({success: false, message: result.error.details[0].message });
       return;
     }
     const account = await accountService.findAccountById(req.params.accountId);
@@ -87,7 +87,7 @@ const getCenter = async (req, res, next) => {
 
     res.status(StatusCodes.OK).json({
       success: true,
-      center: centerData
+      data: centerData
     })
   } catch(error){
     next(new ApiError(StatusCodes.NOT_FOUND, error.message));

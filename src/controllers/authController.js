@@ -20,12 +20,14 @@ import { validate } from "../validate/validate.js";
 
 const signUp = async (req, res, next) => {
   try {
-   //validate
-   const result = validate.registerValidation(req.body);
-   if(result.error){
-     res.status(400).send({error: result.error.details[0].message});
-     return;
-   }
+    //validate
+    const result = validate.registerValidation(req.body);
+    if (result.error) {
+      res
+        .status(400)
+        .send({ success: false, message: result.error.details[0].message });
+      return;
+    }
 
     const email = req.body.email;
     const oldAccount = await accountService.findAccountByEmail(email);
@@ -136,11 +138,14 @@ const signIn = async (req, res, next) => {
         refreshToken: refreshToken,
         accessToken: accessToken
       };
-      res.status(StatusCodes.OK).json({ data: userData });
+      res.status(StatusCodes.OK).json({ success: true, data: userData });
     } else if (account.role == enums.roles.CENTER) {
       const center = await centerService.findCenterByAccountId(account.id);
       if (!center) {
-        throw new ApiError(StatusCodes.NOT_FOUND, ErrorCenter.centerInfoNotFound);
+        throw new ApiError(
+          StatusCodes.NOT_FOUND,
+          ErrorCenter.centerInfoNotFound
+        );
       }
 
       const accessToken = await jwtUtils.generateAuthToken({
@@ -176,12 +181,11 @@ const signIn = async (req, res, next) => {
         refreshToken: refreshToken,
         accessToken: accessToken
       };
-      res.status(StatusCodes.OK).json({ data: centerData });
+      res.status(StatusCodes.OK).json({ success: true, data: centerData });
     }
-
   } catch (error) {
     const customError = new ApiError(
-      StatusCodes.INTERNAL_SERVER_ERROR,
+      StatusCodes.UNAUTHORIZED,
       error.message
     );
     next(customError);
@@ -205,7 +209,9 @@ const signOut = async (req, res, next) => {
         }
       );
     }
-    res.status(StatusCodes.OK).json({ message: "Signed out successfully!" });
+    res
+      .status(StatusCodes.OK)
+      .json({ success: true, message: "Signed out successfully!" });
     return;
   } catch (error) {
     const customError = new ApiError(

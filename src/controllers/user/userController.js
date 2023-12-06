@@ -11,13 +11,15 @@ const createInformation = async (req, res, next) => {
   try {
     //validate infomation
     const result = validate.infoUserValidate(req.body);
-    if(result.error){
-      res.status(400).send({error: result.error.details[0].message});
+    if (result.error) {
+      res
+        .status(400)
+        .send({ success: true, message: result.error.details[0].message });
       return;
     }
 
     const account = await accountService.findAccountById(req.params.accountId);
-    if(!account){
+    if (!account) {
       throw new ApiError(
         StatusCodes.UNAUTHORIZED,
         ErrorAccount.accountNotFound
@@ -44,11 +46,11 @@ const createInformation = async (req, res, next) => {
 };
 
 const findUser = async (req, res, next) => {
-  try{
+  try {
     const userId = req.params.userId;
     const user = await userService.findInfoUserByUserId(userId);
-   
-    if(!user.accountId.isActive){
+
+    if (!user.accountId.isActive) {
       throw new ApiError(StatusCodes.NOT_FOUND, ErrorUser.userInfoNotFound);
     }
 
@@ -68,9 +70,9 @@ const findUser = async (req, res, next) => {
 
     res.status(StatusCodes.OK).json({
       success: true,
-      user: userData
-    })
-  } catch(error){
+      data: userData
+    });
+  } catch (error) {
     next(new ApiError(StatusCodes.NOT_FOUND, error.message));
   }
 };
@@ -92,10 +94,13 @@ const changeInfomation = async (req, res, next) => {
   try {
     const userId = req.params.userId;
     const user = await userService.findUserById(userId);
-    if(!user){
+    if (!user) {
       throw new ApiError(StatusCodes.NOT_FOUND, ErrorUser.userNotExist);
     }
-    const users = await userService.updateUser({data: req.body, userId: userId});
+    const users = await userService.updateUser({
+      data: req.body,
+      userId: userId
+    });
     res.status(StatusCodes.OK).json({
       success: true,
       data: users
