@@ -65,7 +65,8 @@ const findUser = async (req, res, next) => {
       lastName: user.lastName,
       phoneNumber: user.phoneNumber,
       address: user.address,
-      experience: user.experience
+      experience: user.experience,
+      aboutMe: user.aboutMe
     };
 
     res.status(StatusCodes.OK).json({
