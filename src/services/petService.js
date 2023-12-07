@@ -30,7 +30,7 @@ const deletePet = async function (id) {
 };
 
 const findAllOfCenter = async function (centerId) {
-  const pets = await Pet.find({ centerId: centerId });
+  const pets = await Pet.find({ centerId: centerId }).populate('centerId').populate('foundOwner');
   return pets;
 };
 
