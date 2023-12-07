@@ -40,7 +40,7 @@ const findAll = async function () {
       { statusAdopt: enums.statusAdopt.NOTHING },
       { statusAdopt: enums.statusAdopt.ADOPTING }
     ]
-  }).sort({ level: -1 });
+  }).sort({ level: -1 }).populate('centerId').populate('foundOwner');
   return pets;
 };
 
