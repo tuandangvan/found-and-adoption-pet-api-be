@@ -119,7 +119,7 @@ const changeStatusPost = async (req, res, next) => {
     });
     res.status(StatusCodes.OK).json({
       success: true,
-      data: changeStatus
+      data: `Change status to ${statusNew}`
     });
   } catch (error) {
     const customError = new ApiError(StatusCodes.BAD_REQUEST, error.message);
