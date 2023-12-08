@@ -8,6 +8,8 @@ import PermissionRoles from "../../../utils/rolePermission.js";
 const router = express.Router();
 router.get("/users", authencation, authorizationMiddelware.permission(PermissionRoles.onlyAdmin),
 adminController.getAllUser);
+router.get("/centers", authencation, authorizationMiddelware.permission(PermissionRoles.onlyAdmin),
+adminController.getAllCenter);
 
 router.get("/pets", authencation, authorizationMiddelware.permission(PermissionRoles.onlyAdmin),
 adminController.getAllPets);
