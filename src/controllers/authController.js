@@ -89,7 +89,7 @@ const checkExpireToken = async (req, res, next) => {
       .json({ success: false, message: "Please login!" });
   } catch (error) {
     const customError = new ApiError(
-      StatusCodes.UNAUTHORIZED,
+      StatusCodes.MULTI_STATUS,
       error.message
     );
     next(customError);
@@ -185,7 +185,7 @@ const signIn = async (req, res, next) => {
     }
   } catch (error) {
     const customError = new ApiError(
-      StatusCodes.UNAUTHORIZED,
+      StatusCodes.MULTI_STATUS,
       error.message
     );
     next(customError);

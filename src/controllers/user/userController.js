@@ -50,7 +50,7 @@ const findUser = async (req, res, next) => {
     const userId = req.params.userId;
     const user = await userService.findInfoUserByUserId(userId);
 
-    if (user.accountId.status!=enums.statusAccount.LOCKED) {
+    if (!user.accountId.status!=enums.statusAccount.LOCKED) {
       throw new ApiError(StatusCodes.NOT_FOUND, ErrorUser.userInfoNotFound);
     }
 
