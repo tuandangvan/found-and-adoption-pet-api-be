@@ -58,6 +58,19 @@ const findPostInfoById = async function (postId) {
   return post;
 };
 
+const findPostInfoAllActive = async function () {
+  const post = await Post.find({ status: enums.statusPost.ACTIVE })
+    .populate("userId")
+    .populate("centerId")
+    .populate("userId.accountId")
+    .populate("centerId.accountId")
+    .populate("reaction.userId")
+    .populate("reaction.centerId")
+    .populate("comments.userId")
+    .populate("comments.centerId")
+  return post;
+};
+
 const findPostInfoAll = async function (page, limit) {
   const post = await Post.find({ status: enums.statusPost.ACTIVE })
     .populate("userId")
@@ -243,5 +256,6 @@ export const postService = {
   deleteComment,
   findPostInfoAll,
   findPostByIdReaction,
+  findPostInfoAllActive,
   findAllPostPersonal
 };

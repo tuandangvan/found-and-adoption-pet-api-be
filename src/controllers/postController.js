@@ -8,6 +8,7 @@ import ApiError from "../utils/ApiError.js";
 import { setEnum } from "../utils/setEnum.js";
 import { token } from "../utils/token.js";
 import postModel from "../models/postModel.js";
+import { accountService } from "../services/accountService.js";
 
 const addPost = async (req, res, next) => {
   try {
@@ -136,7 +137,29 @@ const getPost = async (req, res, next) => {
       throw new ApiError(StatusCodes.NOT_FOUND, ErrorPost.postNotFound);
     }
     let check = false;
-    if (post.status == enums.statusPost.ACTIVE) check = true;
+    if (post.status == enums.statusPost.ACTIVE) {
+      if (post.centerId) {
+        if (
+          post.centerId.id == decodeToken.centerId &&
+          decodeToken.userId == null
+        )
+          check = true;
+        else {
+          if (post.centerId.status == enums.statusAccount.ACTIVE) check = true;
+        }
+      }
+      if (post.userId) {
+        if (
+          post.userId.id == decodeToken.userId &&
+          decodeToken.centerId == null
+        )
+          check = true;
+        else {
+          if (post.userId.status == enums.statusAccount.ACTIVE) check = true;
+        }
+      }
+    }
+    check = true;
     if (post.status == enums.statusPost.HIDDEN) {
       if (post.centerId) {
         if (
@@ -167,24 +190,46 @@ const getPost = async (req, res, next) => {
   }
 };
 
+const filterPostAccountActive = async (posts) => {
+  var postsRT = [];
+
+  for (const post of posts) {
+    if (post.userId) {
+      const account = await accountService.findAccountById(post.userId.accountId);
+      if (account && account.status === enums.statusAccount.ACTIVE) {
+        postsRT.push(post);
+      }
+    }else{
+      const account = await accountService.findAccountById(post.centerId.accountId);
+      if (account && account.status === enums.statusAccount.ACTIVE) {
+        postsRT.push(post);
+      }
+    }
+  }
+  return postsRT;
+};
+
 const getAllPost = async (req, res, next) => {
   try {
     //phân trang
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 15;
-    const totalItems = await postModel.countDocuments({
-      status: enums.statusPost.ACTIVE
-    });
-    const totalPages = Math.ceil(totalItems / limit);
 
+    const postsActive = await postService.findPostInfoAllActive();
+
+
+    const postsActiveFilter = await filterPostAccountActive(postsActive);
     const post = await postService.findPostInfoAll(page, limit);
+    const postFilter = await filterPostAccountActive(post);
+
+    const totalPages = Math.ceil(postsActiveFilter.length / limit);
     if (!post) {
       throw new ApiError(StatusCodes.NOT_FOUND, ErrorPost.postNotFound);
     }
     res.status(StatusCodes.OK).json({
       success: true,
-      data: post,
-      totalPost: post.length,
+      data: postFilter,
+      totalPost: postFilter.length,
       page: `${page}/${totalPages}`
     });
   } catch (error) {
