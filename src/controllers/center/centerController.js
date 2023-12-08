@@ -69,7 +69,7 @@ const getCenter = async (req, res, next) => {
     const centerId = req.params.centerId;
     const center = await centerService.findInfoCenterById(centerId);
 
-    if(!center.accountId.isActive){
+    if(!center.accountId.status!=enums.statusAccount.LOCKED){
       throw new ApiError(StatusCodes.NOT_FOUND, ErrorCenter.centerInfoNotFound);
     }
 
@@ -79,7 +79,7 @@ const getCenter = async (req, res, next) => {
       email: center.accountId.email,
       role: center.accountId.role,
       avatar: center.avatar,
-      isActive: center.accountId.isActive,
+      status: center.accountId.status,
       name: center.name,
       phoneNumber: center.phoneNumber,
       address: center.address,

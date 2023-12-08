@@ -20,9 +20,11 @@ const accountSchema = mongoose.Schema(
       enum: [enums.roles.USER, enums.roles.CENTER, enums.roles.ADMIN],
       default: enums.roles.USER
     },
-    isActive: {
-      type: Boolean,
-      default: true //true: isActive, false: noActive
+    status: {
+      type: String,
+      required: true,
+      enum: [enums.statusAccount.ACTIVE, enums.statusAccount.HIDDEN, enums.statusAccount.LOCKED],
+      default: enums.statusAccount.ACTIVE 
     },
     refreshToken: {
       type: String,

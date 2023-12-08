@@ -6,7 +6,7 @@ const generateAuthToken = async function ({account, userId, centerId}) {
       id: account.id,
       email: account.email,
       role: account.role,
-      isActive: account.isActive,
+      status: account.status,
       userId: userId,
       centerId: centerId,
       access: true
@@ -22,7 +22,7 @@ const generateRefreshToken = async function ({account, userId, centerId}) {
       id: account.id,
       email: account.email,
       role: account.role,
-      isActive: account.isActive,
+      status: account.status,
       userId: userId,
       centerId: centerId,
       access: false

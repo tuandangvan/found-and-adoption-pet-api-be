@@ -4,6 +4,12 @@ const statusPost = {
   HIDDEN: "HIDDEN"
 };
 
+const statusAccount = {
+  ACTIVE: "ACTIVE",
+  LOCKED: "LOCKED",
+  HIDDEN: "HIDDEN"
+};
+
 const roles = {
   ADMIN: "ADMIN",
   USER: "USER",
@@ -33,6 +39,7 @@ const statusAdopt = {
 
 export const enums = {
     statusPost,
+    statusAccount,
     roles,
     genders,
     statusPet,
