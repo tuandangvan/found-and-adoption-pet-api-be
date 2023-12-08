@@ -19,7 +19,7 @@ const getAllUser = async (req, res, next) => {
 
 const getAllCenter = async (req, res, next) => {
   try {
-    const centers = await centerService.getAll();
+    const centers = await centerService.findAllCenterByIdAD();
     res.status(StatusCodes.OK).json({
       success: true,
       data: centers
