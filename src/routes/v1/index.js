@@ -10,6 +10,7 @@ import { adminRoute } from "./admin/adminRoute.js";
 import { chatRoute } from "./chat/chatRoute.js";
 import { messageRoute } from "./chat/messageRoute.js";
 import { adoptRoute } from "./adoptRoute.js";
+import { notifyRoute } from "./notifyRoute.js";
 
 
 const router = express.Router();
@@ -32,5 +33,6 @@ router.use("/admin", adminRoute);
 router.use("/chat", chatRoute);
 router.use("/message", messageRoute);
 router.use("/adopt", adoptRoute);
+router.use("/notify", notifyRoute);
 
 export const APIs_V1 = router;

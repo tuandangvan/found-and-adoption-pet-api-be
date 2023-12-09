@@ -7,14 +7,28 @@ const notifySchema = mongoose.Schema(
       type: String,
       required: true
     },
+    receiver: [
+      {
+        userId: {
+          type: mongoose.Schema.ObjectId,
+          ref: "User",
+          default: null
+        },
+        centerId: {
+          type: mongoose.Schema.ObjectId,
+          ref: "Center",
+          default: null
+        }
+      }
+    ],
     name: {
-      type: String,
+      type: String
     },
     avatar: {
-      type: String,
+      type: String
     },
     content: {
-      type: String,
+      type: String
     },
     idDestinate: {
       type: String,
@@ -27,7 +41,12 @@ const notifySchema = mongoose.Schema(
     },
     read: {
       type: Boolean,
-      default: false
+      default: false,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      expires: 30*24*60*60,//tự động xóa sau 30 ngày
     }
   },
   {

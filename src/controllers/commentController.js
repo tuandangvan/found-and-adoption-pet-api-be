@@ -36,8 +36,12 @@ const addComment = async (req, res, next) => {
     });
 
     if (newPost) {
-      notifyService.createNotify({
+      await notifyService.createNotify({
         title: "Comment",
+        receiver: [{
+          userId: post.userId,
+          centerId: post.centerId
+        }],
         name: decodeToken.role == "USER" ? infoCmt.lastName : infoCmt.name,
         avatar: infoCmt.avatar,
         content: ' commented on your post.',

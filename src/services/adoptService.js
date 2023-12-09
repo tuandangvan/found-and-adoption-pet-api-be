@@ -75,7 +75,6 @@ const findByPetIdPENDING_ExceptUserSelect = async function (petId, userId) {
     statusAdopt: "PENDING",
     userId: {$ne: userId}
   });
-  console.log(adopts);
   return adopts;
 }
 

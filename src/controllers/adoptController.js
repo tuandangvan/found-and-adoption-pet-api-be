@@ -9,6 +9,9 @@ import { env } from "../config/environment";
 import { enums } from "../enums/enums";
 import { setEnum } from "../utils/setEnum";
 import ErrorAdopt from "../messageError/errorAdopt";
+import { notifyService } from "../services/notifyService";
+import { userService } from "../services/userService";
+import { centerService } from "../services/centerService";
 
 const adoption = async (req, res, next) => {
   try {
@@ -17,7 +20,7 @@ const adoption = async (req, res, next) => {
     if (!pet) {
       throw new ApiError(StatusCodes.NOT_FOUND, ErrorPet.petNotFound);
     }
-    if(pet.statusAdopt == enums.statusAdopt.HAS_ONE_OWNER){
+    if (pet.statusAdopt == enums.statusAdopt.HAS_ONE_OWNER) {
       throw new ApiError(StatusCodes.NOT_ACCEPTABLE, ErrorPet.petHasOwner);
     }
     const getToken = await token.getTokenHeader(req);
@@ -27,7 +30,10 @@ const adoption = async (req, res, next) => {
       adoptReq.petId
     );
     if (adopt) {
-      throw new ApiError(StatusCodes.NOT_FOUND, ErrorAdopt.adoptExist);
+      res.status(StatusCodes.NOT_ACCEPTABLE).json({
+        success: false,
+        message: ErrorAdopt.adoptExist
+      });
     }
     //create request
     const newAdopt = await adoptService.createAdopt({
@@ -43,6 +49,18 @@ const adoption = async (req, res, next) => {
           enums.statusAdopt.ADOPTING
         );
       }
+      const user = await userService.findUserById(decodeToken.userId);
+
+      await notifyService.createNotify({
+        title: "Adoption",
+        receiver: [user.id],
+        name: user.lastName,
+        avatar: user.avatar,
+        content: " requested to adopt a pet.",
+        idDestinate: newAdopt._id,
+        allowView: true
+      });
+
       res.status(StatusCodes.CREATED).json({
         success: true,
         message: "Pet adoption request successful!",
@@ -83,23 +101,61 @@ const adoptionStatusAdopt = async (req, res, next) => {
         adopt.userId
       );
       if (adopts) {
+        const center = await centerService.findCenterById(decodeToken.centerId);
+        var receivers = [];
+
         //cancelled adopt orther with reason has been adopted
-        adopts.forEach(async (adoptItem) => {
-          await adoptService.changeStatus(
-            adoptItem.id,
-            enums.statusAdopt.CANCELLED
-          );
-          await adoptService.cancelledReason(adoptItem.id, true, 'Has been adopted');
+        await Promise.all(
+          adopts.map(async (adoptItem) => {
+            await adoptService.changeStatus(
+              adoptItem.id,
+              enums.statusAdopt.CANCELLED
+            );
+            await adoptService.cancelledReason(
+              adoptItem.id,
+              true,
+              "Has been adopted"
+            );
+            receivers.push({
+              userId: adoptItem.userId,
+              centerId: null
+            });
+          })
+        );
+        //notify person accepted
+        await notifyService.createNotify({
+          title: "Adoption",
+          receiver: receivers,
+          name: center.name,
+          avatar: center.avatar,
+          content: " the request has been cancelled.",
+          idDestinate: adopt.id,
+          allowView: true
         });
       }
-
       await petService.changeOwner(adopt.petId, adopt.userId);
       await petService.changeStatus(
         adopt.petId,
         enums.statusAdopt.HAS_ONE_OWNER
       );
-
       await adoptService.changeStatus(adopt.id, enums.statusAdopt.ACCEPTED);
+      const user = await userService.findUserById(adopt.userId);
+      //notify person accepted
+      await notifyService.createNotify({
+        title: "Adoption",
+        receiver: [
+          {
+            userId: user.id,
+            centerId: null
+          }
+        ],
+        name: user.lastName,
+        avatar: user.avatar,
+        content: " requested to adopt a pet.",
+        idDestinate: adopt.id,
+        allowView: true
+      });
+
       res.status(StatusCodes.OK).json({
         success: true,
         message: "The request has been accepted!"
@@ -113,6 +169,22 @@ const adoptionStatusAdopt = async (req, res, next) => {
       await petService.changeStatus(adopt.petId, enums.statusAdopt.NOTHING);
       await adoptService.changeStatus(adopt.id, enums.statusAdopt.CANCELLED);
       await adoptService.cancelledReason(adopt.id, true, reason);
+      const center = await centerService.findCenterById(decodeToken.centerId);
+      await notifyService.createNotify({
+        title: "Adoption",
+        receiver: [
+          {
+            userId: adopt.userId,
+            centerId: null
+          }
+        ],
+        name: center.name,
+        avatar: center.avatar,
+        content: " requested to adopt a pet.",
+        idDestinate: adopt.id,
+        allowView: true
+      });
+
       res.status(StatusCodes.OK).json({
         success: true,
         message: "Cancel adoption successfully!"
@@ -126,6 +198,24 @@ const adoptionStatusAdopt = async (req, res, next) => {
       await petService.changeStatus(adopt.petId, enums.statusAdopt.NOTHING);
       await adoptService.changeStatus(adopt.id, enums.statusAdopt.CANCELLED);
       await adoptService.cancelledReason(adopt.id, false, reason);
+
+      const user = await userService.findCenterById(decodeToken.userId);
+      //notify person accepted
+      await notifyService.createNotify({
+        title: "Adoption",
+        receiver: [
+          {
+            userId: null,
+            centerId: adopt.centerId
+          }
+        ],
+        name: user.lastName,
+        avatar: user.avatar,
+        content: " requested to adopt a pet.",
+        idDestinate: adopt.id,
+        allowView: true
+      });
+
       res.status(StatusCodes.OK).json({
         success: true,
         message: "Cancel adoption successfully!"
