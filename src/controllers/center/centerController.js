@@ -83,7 +83,9 @@ const getCenter = async (req, res, next) => {
       name: center.name,
       phoneNumber: center.phoneNumber,
       address: center.address,
-      aboutMe: center.aboutMe
+      aboutMe: center.aboutMe,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt
     };
 
     res.status(StatusCodes.OK).json({
