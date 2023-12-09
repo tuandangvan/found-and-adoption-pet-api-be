@@ -84,8 +84,8 @@ const getCenter = async (req, res, next) => {
       phoneNumber: center.phoneNumber,
       address: center.address,
       aboutMe: center.aboutMe,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt
+      createdAt: center.createdAt,
+      updatedAt: center.updatedAt
     };
 
     res.status(StatusCodes.OK).json({
