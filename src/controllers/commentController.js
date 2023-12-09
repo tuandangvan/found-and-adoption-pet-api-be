@@ -6,6 +6,9 @@ import ErrorPost from "../messageError/errorPost.js";
 import { postService } from "../services/postService.js";
 import ApiError from "../utils/ApiError.js";
 import { token } from "../utils/token.js";
+import { notifyService } from "../services/notifyService.js";
+import { userService } from "../services/userService.js";
+import { centerService } from "../services/centerService.js";
 
 const addComment = async (req, res, next) => {
   try {
@@ -18,6 +21,12 @@ const addComment = async (req, res, next) => {
 
     const getToken = await token.getTokenHeader(req);
     const decodeToken = verify(getToken, env.JWT_SECRET);
+    var infoCmt;
+    if (decodeToken.role == "USER") {
+      infoCmt = await userService.findUserById(decodeToken.userId);
+    } else {
+      infoCmt = await centerService.findCenterById(decodeToken.centerId);
+    }
 
     const newPost = await postService.createComment({
       comment: comment,
@@ -25,7 +34,17 @@ const addComment = async (req, res, next) => {
       userId: decodeToken.userId,
       centerId: decodeToken.centerId
     });
+
     if (newPost) {
+      notifyService.createNotify({
+        title: "Comment",
+        name: decodeToken.role == "USER" ? infoCmt.lastName : infoCmt.name,
+        avatar: infoCmt.avatar,
+        content: ' commented on your post.',
+        idDestinate: newPost._id,
+        allowView: true
+      });
+
       res.status(StatusCodes.CREATED).json({
         success: true,
         message: "Comment posted successfully!",
@@ -35,10 +54,7 @@ const addComment = async (req, res, next) => {
       throw new ApiError(StatusCodes.UNAUTHORIZED, ErrorPost.postCommentFail);
     }
   } catch (error) {
-    const customError = new ApiError(
-      StatusCodes.UNAUTHORIZED,
-      error.message
-    );
+    const customError = new ApiError(StatusCodes.UNAUTHORIZED, error.message);
     next(customError);
   }
 };
@@ -65,7 +81,6 @@ const updateComment = async (req, res, next) => {
     } else {
       throw new ApiError(StatusCodes.UNAUTHORIZED, ErrorPost.postCommentFail);
     }
-
   } catch (Error) {
     next(new ApiError(StatusCodes.UNAUTHORIZED, Error.message));
   }
@@ -84,7 +99,7 @@ const deleteComment = async (req, res, next) => {
     });
     res.status(StatusCodes.OK).json({
       success: true,
-      message: `Comment ${commentId} has been successfully deleted!`,
+      message: `Comment ${commentId} has been successfully deleted!`
     });
   } catch (error) {
     const customError = new ApiError(StatusCodes.BAD_REQUEST, error.message);

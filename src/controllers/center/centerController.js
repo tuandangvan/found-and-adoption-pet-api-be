@@ -54,7 +54,7 @@ const updateCenter = async (req, res, next) => {
       data: req.body,
       centerId: centerId
     });
-    res.status(StatusCodes.OK).json({
+    res.status(StatusCodes.CREATED).json({
       success: true,
       data: centers
     });
