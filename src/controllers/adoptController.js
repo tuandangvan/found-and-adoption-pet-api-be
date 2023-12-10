@@ -199,7 +199,7 @@ const adoptionStatusAdopt = async (req, res, next) => {
       await adoptService.changeStatus(adopt.id, enums.statusAdopt.CANCELLED);
       await adoptService.cancelledReason(adopt.id, false, reason);
 
-      const user = await userService.findCenterById(decodeToken.userId);
+      const user = await userService.findUserById(decodeToken.userId);
       //notify person accepted
       await notifyService.createNotify({
         title: "Adoption",
