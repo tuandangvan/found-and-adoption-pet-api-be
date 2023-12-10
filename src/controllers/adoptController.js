@@ -57,7 +57,7 @@ const adoption = async (req, res, next) => {
         receiver: [{ userId: user.id, centerId: null }],
         name: user.lastName,
         avatar: user.avatar,
-        content: " requested to adopt a pet.",
+        content: "You requested to adopt a pet.",
         idDestinate: newAdopt._id,
         allowView: true
       });
@@ -129,7 +129,7 @@ const adoptionStatusAdopt = async (req, res, next) => {
           receiver: receivers,
           name: center.name,
           avatar: center.avatar,
-          content: " the request has been cancelled.",
+          content: "Your pet adoption request has been cancelled.",
           idDestinate: adopt.id,
           allowView: true
         });
@@ -152,7 +152,7 @@ const adoptionStatusAdopt = async (req, res, next) => {
         ],
         name: user.lastName,
         avatar: user.avatar,
-        content: " requested to adopt a pet.",
+        content: "Your pet adoption request has been accepted.",
         idDestinate: adopt.id,
         allowView: true
       });
@@ -181,7 +181,7 @@ const adoptionStatusAdopt = async (req, res, next) => {
         ],
         name: center.name,
         avatar: center.avatar,
-        content: " requested to adopt a pet.",
+        content: "Your pet adoption request has been cancelled",
         idDestinate: adopt.id,
         allowView: true
       });
@@ -212,7 +212,7 @@ const adoptionStatusAdopt = async (req, res, next) => {
         ],
         name: user.lastName,
         avatar: user.avatar,
-        content: " requested to adopt a pet.",
+        content: "The pet adopter's request has been cancelled.",
         idDestinate: adopt.id,
         allowView: true
       });
