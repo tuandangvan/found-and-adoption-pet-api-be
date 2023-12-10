@@ -34,6 +34,7 @@ const adoption = async (req, res, next) => {
         success: false,
         message: ErrorAdopt.adoptExist
       });
+      return;
     }
     //create request
     const newAdopt = await adoptService.createAdopt({
