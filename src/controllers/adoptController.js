@@ -142,6 +142,7 @@ const adoptionStatusAdopt = async (req, res, next) => {
       await adoptService.changeStatus(adopt.id, enums.statusAdopt.ACCEPTED);
       const user = await userService.findUserById(adopt.userId);
       //notify person accepted
+      const center = await centerService.findCenterById(decodeToken.centerId);
       await notifyService.createNotify({
         title: "Adoption",
         receiver: [
@@ -150,8 +151,8 @@ const adoptionStatusAdopt = async (req, res, next) => {
             centerId: null
           }
         ],
-        name: user.lastName,
-        avatar: user.avatar,
+        name: center.name,
+        avatar: center.avatar,
         content: "Your pet adoption request has been accepted.",
         idDestinate: adopt.id,
         allowView: true
