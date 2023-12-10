@@ -54,7 +54,7 @@ const adoption = async (req, res, next) => {
 
       await notifyService.createNotify({
         title: "Adoption",
-        receiver: [user.id],
+        receiver: [{ userId: user.id, centerId: null }],
         name: user.lastName,
         avatar: user.avatar,
         content: " requested to adopt a pet.",
