@@ -14,4 +14,5 @@ router.post("/forgot-password", authController.forgotPassword);
 router.put("/change-password", authencation, authorizationMiddelware.permission(PermissionRoles.User_Center), authController.changePassword);
 router.post("/token", authController.checkExpireToken);
 router.post("/sign-out", authController.signOut);
+router.put("/status", authController.changeStatusAcc);
 export const authRoute = router;

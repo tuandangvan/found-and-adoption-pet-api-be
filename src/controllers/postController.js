@@ -214,22 +214,21 @@ const getAllPost = async (req, res, next) => {
     //phân trang
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 15;
+    const postsActive = await postService.findPostInfoAllActive(page, limit);
 
-    const postsActive = await postService.findPostInfoAllActive();
 
+    // const postsActiveFilter = await filterPostAccountActive(postsActive);
+    // const post = await postService.findPostInfoAll(page, limit);
+    // const postFilter = await filterPostAccountActive(post);
 
-    const postsActiveFilter = await filterPostAccountActive(postsActive);
-    const post = await postService.findPostInfoAll(page, limit);
-    const postFilter = await filterPostAccountActive(post);
-
-    const totalPages = Math.ceil(postsActiveFilter.length / limit);
-    if (!post) {
-      throw new ApiError(StatusCodes.NOT_FOUND, ErrorPost.postNotFound);
-    }
+    const totalPages = Math.ceil(postsActive.length / limit);
+    // if (!post) {
+    //   throw new ApiError(StatusCodes.NOT_FOUND, ErrorPost.postNotFound);
+    // }
     res.status(StatusCodes.OK).json({
       success: true,
-      data: postFilter,
-      totalPost: postFilter.length,
+      data: postsActive,
+      totalPost: postsActive.length,
       page: `${page}/${totalPages}`
     });
   } catch (error) {

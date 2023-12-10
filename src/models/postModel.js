@@ -77,6 +77,11 @@ const postSchema = mongoose.Schema(
         enums.statusPost.LOCKED
       ],
       default: enums.statusPost.ACTIVE
+    },
+    statusAccount: {
+      type: String,
+      required: true,
+      default: 'ACTIVE',
     }
   },
   {

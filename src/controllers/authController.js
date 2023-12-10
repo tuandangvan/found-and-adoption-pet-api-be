@@ -17,6 +17,7 @@ import { enums } from "../enums/enums.js";
 import { centerService } from "../services/centerService.js";
 import ErrorCenter from "../messageError/errorCenter.js";
 import { validate } from "../validate/validate.js";
+import { postService } from "../services/postService.js";
 
 const signUp = async (req, res, next) => {
   try {
@@ -88,10 +89,7 @@ const checkExpireToken = async (req, res, next) => {
       .status(StatusCodes.NOT_FOUND)
       .json({ success: false, message: "Please login!" });
   } catch (error) {
-    const customError = new ApiError(
-      StatusCodes.MULTI_STATUS,
-      error.message
-    );
+    const customError = new ApiError(StatusCodes.MULTI_STATUS, error.message);
     next(customError);
   }
 };
@@ -184,10 +182,7 @@ const signIn = async (req, res, next) => {
       res.status(StatusCodes.OK).json({ success: true, data: centerData });
     }
   } catch (error) {
-    const customError = new ApiError(
-      StatusCodes.MULTI_STATUS,
-      error.message
-    );
+    const customError = new ApiError(StatusCodes.MULTI_STATUS, error.message);
     next(customError);
   }
 };
@@ -214,10 +209,7 @@ const signOut = async (req, res, next) => {
       .json({ success: true, message: "Signed out successfully!" });
     return;
   } catch (error) {
-    const customError = new ApiError(
-      StatusCodes.UNAUTHORIZED,
-      error.message
-    );
+    const customError = new ApiError(StatusCodes.UNAUTHORIZED, error.message);
     next(customError);
   }
 };
@@ -282,10 +274,7 @@ const reSendEmailAuthencation = async function (req, res, next) {
       message: "Resend successfully!"
     });
   } catch (error) {
-    const customError = new ApiError(
-      StatusCodes.UNAUTHORIZED,
-      error.message
-    );
+    const customError = new ApiError(StatusCodes.UNAUTHORIZED, error.message);
     next(customError);
   }
 };
@@ -317,10 +306,7 @@ const verifyOTP = async (req, res, next) => {
       throw new ApiError(StatusCodes.UNAUTHORIZED, check.message);
     }
   } catch (error) {
-    const customError = new ApiError(
-      StatusCodes.UNAUTHORIZED,
-      error.message
-    );
+    const customError = new ApiError(StatusCodes.UNAUTHORIZED, error.message);
     next(customError);
   }
 };
@@ -408,6 +394,36 @@ const changePassword = async (req, res, next) => {
   }
 };
 
+const changeStatusAcc = async (req, res, next) => {
+  try {
+    const status = req.body.status;
+    const accessToken = await token.getTokenHeader(req);
+    const decodeToken = verify(accessToken, process.env.JWT_SECRET);
+
+    //change status acc
+    await accountService.changeStatus(decodeToken.id, status);
+    const user = await userService.findUserByAccountId(decodeToken.id);
+    if (user) {
+      //change statusAcc post
+      await postService.changeStatusAcc(user.id, true, status);
+    } else {
+      const center = await centerService.findCenterByAccountId(decodeToken.id);
+      await postService.changeStatusAcc(center.id, false, status);
+    }
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: "Status account changed successfully!"
+    });
+  } catch (error) {
+    const customError = new ApiError(
+      StatusCodes.UNPROCESSABLE_ENTITY,
+      error.message
+    );
+    next(customError);
+  }
+};
+
 export const authController = {
   signUp,
   signIn,
@@ -417,5 +433,6 @@ export const authController = {
   forgotPassword,
   changePassword,
   signOut,
-  checkExpireToken
+  checkExpireToken,
+  changeStatusAcc
 };

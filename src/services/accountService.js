@@ -62,6 +62,11 @@ const findAccountByRefreshToken = async function (token) {
   return account;
 };
 
+const changeStatus = async function (accoutId, status) {
+  const account = await Account.updateOne({ _id: accoutId }, {$set: {status: status}});
+  return account;
+};
+
 export const accountService = {
   createAccount,
   findByCredentials,
@@ -69,5 +74,6 @@ export const accountService = {
   findAccountByEmail,
   findAccountById,
   findAccountByIdOrEmail,
-  findAccountByRefreshToken
+  findAccountByRefreshToken,
+  changeStatus
 };
