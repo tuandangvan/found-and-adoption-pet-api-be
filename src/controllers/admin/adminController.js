@@ -61,7 +61,7 @@ const lockAndUnLockAcc = async (req, res, next) => {
     if (user) {
       await accountService.changeStatus(acc.id, status);
       await postService.changeStatusAcc(user.id, true, status);
-      res.status(StatusCodes.NOT_FOUND).json({
+      res.status(StatusCodes.OK).json({
         success: true,
         message: `Change ${status} successfully!`
       });
@@ -70,12 +70,12 @@ const lockAndUnLockAcc = async (req, res, next) => {
       if (center) {
         await accountService.changeStatus(acc.id, status);
         await postService.changeStatusAcc(center.id, false, status);
-        res.status(StatusCodes.NOT_FOUND).json({
+        res.status(StatusCodes.OK).json({
           success: true,
           message: `Change ${status} successfully!`
         });
       } else {
-        res.status(StatusCodes.NOT_FOUND).json({
+        res.status(StatusCodes.FAILED_DEPENDENCY).json({
           success: false,
           message: `Change ${status} failed!`
         });
