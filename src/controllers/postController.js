@@ -215,8 +215,7 @@ const getAllPost = async (req, res, next) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 15;
     const postsActive = await postService.findPostInfoAllActive(page, limit);
-
-
+    
     // const postsActiveFilter = await filterPostAccountActive(postsActive);
     // const post = await postService.findPostInfoAll(page, limit);
     // const postFilter = await filterPostAccountActive(post);
