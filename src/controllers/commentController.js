@@ -58,7 +58,8 @@ const addComment = async (req, res, next) => {
         idDestinate: postId,
         allowView: true
       });
-
+    }
+    if (newPost) {
       res.status(StatusCodes.CREATED).json({
         success: true,
         message: "Comment posted successfully!",
