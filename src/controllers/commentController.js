@@ -35,17 +35,27 @@ const addComment = async (req, res, next) => {
       centerId: decodeToken.centerId
     });
 
-    if (newPost) {
+    if (
+      newPost &&
+      !(
+        post.centerId == decodeToken.centerId ||
+        post.userId == decodeToken.userId
+      )
+    ) {
       await notifyService.createNotify({
         title: "Comment",
-        receiver: [{
-          userId: post.userId,
-          centerId: post.centerId
-        }],
+        receiver: [
+          {
+            userId: post.userId,
+            centerId: post.centerId
+          }
+        ],
         name: decodeToken.role == "USER" ? infoCmt.lastName : infoCmt.name,
         avatar: infoCmt.avatar,
-        content: ' commented on your post.',
-        idDestinate: newPost._id,
+        content: `${
+          decodeToken.role == "USER" ? infoCmt.lastName : infoCmt.name
+        } commented on your post.`,
+        idDestinate: postId,
         allowView: true
       });
 
