@@ -97,7 +97,7 @@ const checkExpireToken = async (req, res, next) => {
 const signIn = async (req, res, next) => {
   try {
     const account = await accountService.findByCredentials(req.body);
-    if (!account.status == enums.statusAccount.LOCKED) {
+    if (account.status == enums.statusAccount.LOCKED) {
       res
         .status(StatusCodes.NOT_FOUND)
         .json({ success: false, message: "Account is locked!" });
