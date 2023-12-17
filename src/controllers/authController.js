@@ -97,6 +97,14 @@ const checkExpireToken = async (req, res, next) => {
 const signIn = async (req, res, next) => {
   try {
     const account = await accountService.findByCredentials(req.body);
+    if (!account.status==enums.statusAccount.LOCKED) {
+      res.status(StatusCodes.NOT_FOUND).json({success: false, message: "Account is locked!"});
+    }
+    if (account.isActive == false) {
+      res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ success: false, message: "Account is not active!" });
+    }
     if (account.role == enums.roles.USER || account.role == enums.roles.ADMIN) {
       const user = await userService.findUserByAccountId(account.id);
       if (!user) {
