@@ -67,6 +67,11 @@ const changeStatus = async function (accoutId, status) {
   return account;
 };
 
+const updateIsActive = async function (email) {
+  const account = await Account.updateOne({ email: email }, {$set: {isActive: true}});
+  return account;
+};
+
 export const accountService = {
   createAccount,
   findByCredentials,
@@ -75,5 +80,6 @@ export const accountService = {
   findAccountById,
   findAccountByIdOrEmail,
   findAccountByRefreshToken,
-  changeStatus
+  changeStatus,
+  updateIsActive
 };

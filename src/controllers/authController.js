@@ -306,6 +306,7 @@ const verifyOTP = async (req, res, next) => {
         message: "The authentication code is invalid or has expired!"
       });
     } else if (check == "verifySuccess") {
+      await accountService.updateIsActive(email);
       res.status(StatusCodes.OK).json({
         success: true,
         message: "Successfully authenticated account!"
