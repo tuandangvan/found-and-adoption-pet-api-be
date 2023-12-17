@@ -97,8 +97,10 @@ const checkExpireToken = async (req, res, next) => {
 const signIn = async (req, res, next) => {
   try {
     const account = await accountService.findByCredentials(req.body);
-    if (!account.status==enums.statusAccount.LOCKED) {
-      res.status(StatusCodes.NOT_FOUND).json({success: false, message: "Account is locked!"});
+    if (!account.status == enums.statusAccount.LOCKED) {
+      res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ success: false, message: "Account is locked!" });
     }
     if (account.isActive == false) {
       res
@@ -108,7 +110,11 @@ const signIn = async (req, res, next) => {
     if (account.role == enums.roles.USER || account.role == enums.roles.ADMIN) {
       const user = await userService.findUserByAccountId(account.id);
       if (!user) {
-        throw new ApiError(StatusCodes.NOT_FOUND, ErrorUser.userInfoNotFound);
+        res.status(StatusCodes.NOT_FOUND).json({
+          success: false,
+          message: ErrorUser.userInfoNotFound,
+          id: account.id
+        });
       }
       const accessToken = await jwtUtils.generateAuthToken({
         account: account,
@@ -148,10 +154,11 @@ const signIn = async (req, res, next) => {
     } else if (account.role == enums.roles.CENTER) {
       const center = await centerService.findCenterByAccountId(account.id);
       if (!center) {
-        throw new ApiError(
-          StatusCodes.NOT_FOUND,
-          ErrorCenter.centerInfoNotFound
-        );
+        res.status(StatusCodes.NOT_FOUND).json({
+          success: false,
+          message: ErrorCenter.centerInfoNotFound,
+          id: account.id
+        });
       }
 
       const accessToken = await jwtUtils.generateAuthToken({
