@@ -10,6 +10,8 @@ router.get("/:userId", userController.findUser);
 router.post("/:accountId", userController.createInformation);
 router.put("/:userId", authencation, authorizationMiddelware.permission(PermissionRoles.onlyUser),
 userController.changeInfomation); //find user by name or phone or email
+router.put("/:userId/status", authencation, authorizationMiddelware.permission(PermissionRoles.onlyUser),
+userController.changStatusAccount);
 
 router.get("/get-users", userController.findUserByNamePhoneEmail); //find user by name or phone or email
 

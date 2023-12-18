@@ -6,6 +6,7 @@ import { accountService } from "../../services/accountService.js";
 import { centerService } from "../../services/centerService.js";
 import ApiError from "../../utils/ApiError.js";
 import { validate } from "../../validate/validate.js";
+import { postService } from "../../services/postService.js";
 
 const createInfoForCenter = async (req, res, next) => {
   try {
@@ -96,9 +97,29 @@ const getCenter = async (req, res, next) => {
     next(new ApiError(StatusCodes.NOT_FOUND, error.message));
   }
 };
+const changStatusAccount = async (req, res, next) => {
+  try {
+    const centerId = req.params.centerId;
+    const status = req.body.status;
+    const center = await userService.findUserById(centerId);
+    if (!center) {
+      throw new ApiError(StatusCodes.NOT_FOUND, ErrorCenter.centerNotExist);
+    }
+    await accountService.changeStatus(center.accountId, status);
+    await postService.changeStatusAcc(center.id, false, status);
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: `Change ${status} successfully!`
+    });
+  } catch (error) {
+    const customError = new ApiError(StatusCodes.BAD_REQUEST, error.message);
+    next(customError);
+  }
+};
 
 export const centerController = {
   createInfoForCenter,
   updateCenter,
-  getCenter
+  getCenter,
+  changStatusAccount
 };

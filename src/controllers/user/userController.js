@@ -6,6 +6,7 @@ import { accountService } from "../../services/accountService.js";
 import { userService } from "../../services/userService.js";
 import ApiError from "../../utils/ApiError.js";
 import { validate } from "../../validate/validate.js";
+import { postService } from "../../services/postService.js";
 
 const createInformation = async (req, res, next) => {
   try {
@@ -50,7 +51,7 @@ const findUser = async (req, res, next) => {
     const userId = req.params.userId;
     const user = await userService.findInfoUserByUserId(userId);
 
-    if (user.accountId.status==enums.statusAccount.LOCKED) {
+    if (user.accountId.status == enums.statusAccount.LOCKED) {
       throw new ApiError(StatusCodes.NOT_FOUND, ErrorUser.userInfoNotFound);
     }
 
@@ -113,9 +114,31 @@ const changeInfomation = async (req, res, next) => {
     next(customError);
   }
 };
+
+const changStatusAccount = async (req, res, next) => {
+  try {
+    const userId = req.params.userId;
+    const status = req.body.status;
+    const user = await userService.findUserById(userId);
+    if (!user) {
+      throw new ApiError(StatusCodes.NOT_FOUND, ErrorUser.userNotExist);
+    }
+    await accountService.changeStatus(user.accountId, status);
+    await postService.changeStatusAcc(user.id, true, status);
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: `Change ${status} successfully!`
+    });
+  } catch (error) {
+    const customError = new ApiError(StatusCodes.BAD_REQUEST, error.message);
+    next(customError);
+  }
+};
+
 export const userController = {
   createInformation,
   findUser,
   findUserByNamePhoneEmail,
-  changeInfomation
+  changeInfomation,
+  changStatusAccount
 };

@@ -11,4 +11,7 @@ router.put("/:centerId", authencation, authorizationMiddelware.permission(Permis
 centerController.updateCenter);
 router.get("/:centerId", authencation, authorizationMiddelware.permission(PermissionRoles.All), 
 centerController.getCenter);
+
+router.put("/:userId/status", authencation, authorizationMiddelware.permission(PermissionRoles.onlyUser),
+userController.changStatusAccount);
 export const centerRoute = router;
