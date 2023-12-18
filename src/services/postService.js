@@ -251,9 +251,15 @@ const reaction = async function ({ post, userId, centerId }) {
 
 const changeStatusAcc = async function (id, isUser, status) {
   if (isUser) {
-    await Post.updateMany({ userId: id }, { $set: { status: status } });
+    await Post.updateMany(
+      { userId: id, $or: [{ status: "ACTIVE" }, { status: "HIDDEN" }] },
+      { $set: { status: status } }
+    );
   } else {
-    await Post.updateMany({ centerId: id }, { $set: { status: status } });
+    await Post.updateMany(
+      { centerId: id, $or: [{ status: "ACTIVE" }, { status: "HIDDEN" }] },
+      { $set: { status: status } }
+    );
   }
 };
 

@@ -51,6 +51,11 @@ const updateUser = async function ({data, userId}) {
   return users;
 };
 
+const findAD = async function () {
+  const users = User.find({role: "ADMIN"});
+  return users;
+};
+
 
 export const userService = {
   createUser,
@@ -59,5 +64,6 @@ export const userService = {
   getUsers,
   updateUser,
   findUserByAccountId,
-  findInfoUserByUserId
+  findInfoUserByUserId,
+  findAD
 };

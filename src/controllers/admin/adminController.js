@@ -6,6 +6,8 @@ import { centerService } from "../../services/centerService.js";
 import { accountService } from "../../services/accountService.js";
 import ErrorAccount from "../../messageError/errorAccount.js";
 import { postService } from "../../services/postService.js";
+import { notifyService } from "../../services/notifyService.js";
+import { reportService } from "../../services/reportService.js";
 
 const getAllUser = async (req, res, next) => {
   try {
@@ -87,9 +89,131 @@ const lockAndUnLockAcc = async (req, res, next) => {
   }
 };
 
+const handleReport = async (req, res, next) => {
+  try {
+    const reportId = req.body.reportId;
+    const handleReport = req.body.handleReport;
+    const report = await reportService.findReportById(reportId);
+    const post = await postService.findPostById(report.idDestinate);
+
+
+    var receivers = [];
+    await Promise.all(
+      (report.reporter).map(async (report) => {
+        receivers.push({
+          userId: report.userId,
+          centerId: report.centerId
+        });
+      })
+    );
+
+    if (handleReport == "LOCKED") {
+      await reportService.changeStatusReport(report._id, "HANDLED");
+      await postService.updateStatusPost({post: post, newStatus: "LOCKED"});
+
+
+      //notice owner post
+      await notifyService.createNotify({
+        title: "Report",
+        receiver: [{
+          userId: post.userId,
+          centerId: post.centerId
+        }],
+        name: 'Administrator',
+        avatar: 'https://cdn1.vectorstock.com/i/1000x1000/11/10/admin-icon-male-person-profile-avatar-with-gear-vector-25811110.jpg',
+        content: "Your post has been locked!",
+        idDestinate: post._id,
+        allowView: true
+      });
+
+      //notice reporter
+      await notifyService.createNotify({
+        title: "Report",
+        receiver: receivers,
+        name: 'Administrator',
+        avatar: 'https://cdn1.vectorstock.com/i/1000x1000/11/10/admin-icon-male-person-profile-avatar-with-gear-vector-25811110.jpg',
+        content: "The post you reported has been locked!",
+        idDestinate: post._id,
+        allowView: true
+      });
+
+      res.status(StatusCodes.OK).json({
+        success: true,
+        message: `${handleReport} successfully!`
+      });
+    } else if (handleReport == "DELETE") {
+      await reportService.changeStatusReport(report._id, "HANDLED");
+      await postService.deletePostDB(post._id);
+
+      //notice owner post
+      await notifyService.createNotify({
+        title: "Report",
+        receiver: [{
+          userId: post.userId,
+          centerId: post.centerId
+        }],
+        name: 'Administrator',
+        avatar: 'https://cdn1.vectorstock.com/i/1000x1000/11/10/admin-icon-male-person-profile-avatar-with-gear-vector-25811110.jpg',
+        content: "Your post has been deleted!",
+        idDestinate: post._id,
+        allowView: true
+      });
+
+      await notifyService.createNotify({
+        title: "Report",
+        receiver: receivers,
+        name: 'Administrator',
+        avatar: 'https://cdn1.vectorstock.com/i/1000x1000/11/10/admin-icon-male-person-profile-avatar-with-gear-vector-25811110.jpg',
+        content: "The post you reported has been deleted!",
+        idDestinate: post._id,
+        allowView: true
+      });
+
+      res.status(StatusCodes.OK).json({
+        success: true,
+        message: `${handleReport} successfully!`
+      });
+    } else if (handleReport == "REJECT") {
+      await reportService.changeStatusReport(report._id, "REJECTED");
+      await notifyService.createNotify({
+        title: "Report",
+        receiver: receivers,
+        name: 'Administrator',
+        avatar: 'https://cdn1.vectorstock.com/i/1000x1000/11/10/admin-icon-male-person-profile-avatar-with-gear-vector-25811110.jpg',
+        content: "The post you reported has been rejected!",
+        idDestinate: post._id,
+        allowView: true
+      });
+      res.status(StatusCodes.OK).json({
+        success: true,
+        message: `${handleReport} successfully!`
+      });
+    }
+  } catch (error) {
+    const customError = new ApiError(StatusCodes.BAD_REQUEST, error.message);
+    next(customError);
+  }
+};
+
+const getReport = async (req, res, next) => {
+  try {
+    const status = req.query.status;
+    const reports = await reportService.getAllReport(status);
+    res.status(StatusCodes.OK).json({
+      success: true,
+      data: reports
+    });
+  } catch (error) {
+    const customError = new ApiError(StatusCodes.BAD_REQUEST, error.message);
+    next(customError);
+  }
+}
+
 export const adminController = {
   getAllUser,
   getAllCenter,
   getAllPets,
-  lockAndUnLockAcc
+  lockAndUnLockAcc,
+  handleReport,
+  getReport
 };

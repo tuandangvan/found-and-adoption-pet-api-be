@@ -72,6 +72,11 @@ const updateIsActive = async function (email) {
   return account;
 };
 
+const findAD = async function () {
+  const accounts = await Account.find({ role: "ADMIN" });
+  return accounts;
+};
+
 export const accountService = {
   createAccount,
   findByCredentials,
@@ -81,5 +86,6 @@ export const accountService = {
   findAccountByIdOrEmail,
   findAccountByRefreshToken,
   changeStatus,
-  updateIsActive
+  updateIsActive,
+  findAD
 };

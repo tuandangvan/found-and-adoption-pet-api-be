@@ -11,6 +11,7 @@ import { chatRoute } from "./chat/chatRoute.js";
 import { messageRoute } from "./chat/messageRoute.js";
 import { adoptRoute } from "./adoptRoute.js";
 import { notifyRoute } from "./notifyRoute.js";
+import { reportRoute } from "./reportRoute.js";
 
 
 const router = express.Router();
@@ -34,5 +35,5 @@ router.use("/chat", chatRoute);
 router.use("/message", messageRoute);
 router.use("/adopt", adoptRoute);
 router.use("/notify", notifyRoute);
-
+router.use("/report", reportRoute);
 export const APIs_V1 = router;
