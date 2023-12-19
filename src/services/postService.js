@@ -35,7 +35,7 @@ const deletePostDB = async function (postId) {
 };
 
 const findPostById = async function (postId) {
-  const post = await Post.findOne({ _id: postId });
+  const post = await Post.findOne({ _id: postId }).populate("userId").populate("centerId");
   return post;
 };
 const findPostByIdReaction = async function (postId) {
