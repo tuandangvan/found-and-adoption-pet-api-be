@@ -25,6 +25,11 @@ const permission = (permission) => {
       return;
     }
 
+    if (_.isEqual(permission, PermissionRoles.onlyAdmin)) {
+      next();
+      return;
+    }
+
     if (!permission.includes(data.role)) {
       return res.status(401).json({success: false, message: "You don't permission!" });
     }
