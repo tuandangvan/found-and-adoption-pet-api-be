@@ -25,6 +25,11 @@ const reportSchema = new mongoose.Schema(
         reason: {
           type: String,
           required: true
+        },
+        dateReport: {
+          type: Date,
+          default: Date.now,
+          required: true
         }
       }
     ],

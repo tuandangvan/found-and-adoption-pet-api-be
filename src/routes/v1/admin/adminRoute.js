@@ -45,4 +45,11 @@ router.put(
   adminController.handleReport
 );
 
+router.get(
+  "/post/:postId",
+  authencation,
+  authorizationMiddelware.permission(PermissionRoles.onlyAdmin),
+  adminController.getPostByAdmin
+);
+
 export const adminRoute = router;

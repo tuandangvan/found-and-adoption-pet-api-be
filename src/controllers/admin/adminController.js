@@ -209,11 +209,34 @@ const getReport = async (req, res, next) => {
   }
 }
 
+const getPostByAdmin = async (req, res, next) => {
+  const postId = req.params.postId;
+  try {
+    const post = await postService.findPostById(postId);
+    if (!post) {
+      res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: ErrorAccount.postNotFound
+      });
+    }
+    res.status(StatusCodes.OK).json({
+      success: true,
+      data: post
+    });
+  } catch (error) {
+    const customError = new ApiError(StatusCodes.BAD_REQUEST, error.message);
+    next(customError);
+  }
+
+};
+
+
 export const adminController = {
   getAllUser,
   getAllCenter,
   getAllPets,
   lockAndUnLockAcc,
   handleReport,
-  getReport
+  getReport,
+  getPostByAdmin
 };
