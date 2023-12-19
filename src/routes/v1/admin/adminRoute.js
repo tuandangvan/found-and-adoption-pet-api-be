@@ -32,7 +32,7 @@ router.put(
 );
 
 router.get(
-  "/report/:status",
+  "/report",
   authencation,
   authorizationMiddelware.permission(PermissionRoles.onlyAdmin),
   adminController.getReport

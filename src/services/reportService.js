@@ -25,7 +25,7 @@ const changeStatusReport = async function (reportId, status) {
 }
 
 const getAllReport = async function (status) {
-    const report = await Report.find()
+    const report = await Report.find({status: status})
     .populate("commentId")
     .populate("reporter.userId")
     .populate("reporter.centerId")
