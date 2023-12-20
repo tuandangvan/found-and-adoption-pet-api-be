@@ -85,6 +85,13 @@ const deletePet = async (req, res, next) => {
     if (!pet) {
       throw new ApiError(StatusCodes.NOT_FOUND, ErrorPet.petNotFound);
     }
+    if(pet.status != "NOTHING"){
+      res.status(StatusCodes.OK).json({
+        success: false,
+        message: "Pets have been adopted!"
+      });
+      return;
+    }
     const getToken = await token.getTokenHeader(req);
     const decodeToken = verify(getToken, env.JWT_SECRET);
     const center = await centerService.findCenterById(decodeToken.centerId);
