@@ -350,7 +350,7 @@ const forgotPassword = async (req, res, next) => {
     });
 
     await accountService.updatePassword({
-      email: email,
+      account: account,
       newPassword: newPassword
     });
 
