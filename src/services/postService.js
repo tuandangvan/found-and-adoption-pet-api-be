@@ -251,12 +251,12 @@ const changeStatusAcc = async function (id, isUser, status) {
   if (isUser) {
     await Post.updateMany(
       { userId: id, $or: [{ status: "ACTIVE" }, { status: "HIDDEN" }] },
-      { $set: { status: status } }
+      { $set: { statusAccount: status } }
     );
   } else {
     await Post.updateMany(
       { centerId: id, $or: [{ status: "ACTIVE" }, { status: "HIDDEN" }] },
-      { $set: { status: status } }
+      { $set: { statusAccount: status } }
     );
   }
 };
