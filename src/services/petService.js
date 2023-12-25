@@ -30,7 +30,9 @@ const deletePet = async function (id) {
 };
 
 const findAllOfCenter = async function (centerId) {
-  const pets = await Pet.find({ centerId: centerId }).populate('centerId').populate('foundOwner');
+  const pets = await Pet.find({ centerId: centerId })
+    .populate("centerId")
+    .populate("foundOwner");
   return pets;
 };
 
@@ -40,7 +42,10 @@ const findAll = async function () {
       { statusAdopt: enums.statusAdopt.NOTHING },
       { statusAdopt: enums.statusAdopt.ADOPTING }
     ]
-  }).sort({ level: -1 }).populate('centerId').populate('foundOwner');
+  })
+    .sort({ level: -1 })
+    .populate("centerId")
+    .populate("foundOwner");
   return pets;
 };
 
@@ -50,12 +55,38 @@ const findPetById = async function (id) {
 };
 
 const changeStatus = async function (id, status) {
-  const pet = await Pet.updateOne({ _id: id }, { $set: { statusAdopt: status } });
+  const pet = await Pet.updateOne(
+    { _id: id },
+    { $set: { statusAdopt: status } }
+  );
   return pet;
 };
 
 const changeOwner = async function (id, idOwnwer) {
-  const pet = await Pet.updateOne({ _id: id }, { $set: { foundOwner: idOwnwer } });
+  const pet = await Pet.updateOne(
+    { _id: id },
+    { $set: { foundOwner: idOwnwer } }
+  );
+  return pet;
+};
+
+const filter = async function ({ breed, color, age }) {
+  const query = [];
+  breed && query.push({ breed: { $regex: breed, $options: "i" } });
+  color && query.push({ color: { $regex: color, $options: "i" } });
+  age && query.push({ age: age });
+  
+  const pet = await Pet.find({
+    $or: [
+      { statusAdopt: enums.statusAdopt.NOTHING },
+      { statusAdopt: enums.statusAdopt.ADOPTING }
+    ],
+    $and: query
+  })
+    .sort({ level: -1 })
+    .populate("centerId")
+    .populate("foundOwner");
+
   return pet;
 };
 
@@ -67,5 +98,6 @@ export const petService = {
   findPetById,
   findAll,
   changeStatus,
-  changeOwner
+  changeOwner,
+  filter
 };

@@ -155,11 +155,32 @@ const getAllPet = async (req, res, next) => {
   }
 };
 
+
+const filter = async (req, res, next) => {
+  const breed = req.query.breed || null;
+  const color = req.query.color || null;
+  const age = req.query.age || null;
+
+  console.log(breed, color, age);
+
+  try {
+    const pets = await petService.filter({breed, color, age});
+    res.status(StatusCodes.OK).json({
+      success: true,
+      data: pets
+    });
+  } catch (error) {
+    const customError = new ApiError(StatusCodes.BAD_REQUEST, error.message);
+    next(customError);
+  }
+}
+
 export const petController = {
   createPet,
   getAllPetOfCenter,
   updatePet,
   deletePet,
   getAllPetOfCenterPermission,
-  getAllPet
+  getAllPet,
+  filter
 };
