@@ -71,9 +71,7 @@ const findPostInfoAllActive = async function (page, limit) {
     .populate("reaction.centerId")
     .populate("comments.userId")
     .populate("comments.centerId")
-    .sort({ createdAt: -1 })
-    .skip((page - 1) * limit)
-    .limit(limit);
+    .sort({ createdAt: -1 });
   return post;
 };
 
