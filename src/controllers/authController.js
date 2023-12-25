@@ -386,16 +386,30 @@ const changePassword = async (req, res, next) => {
 
     const user = await userService.findUserByAccountId(account.id);
 
-    const sendEmail = await emailService.sendMailAuthencation({
-      receiver: decodeToken.email,
-      subject: "Change password",
-      purpose: "CHANGE PASSWORD!",
-      firstName: user.firstName,
-      lastName: user.lastName,
-      require: "",
-      success: "",
-      text: null
-    });
+    if (!user) {
+      const center = await centerService.findCenterByAccountId(account.id);
+      const sendEmail = await emailService.sendMailAuthencation({
+        receiver: decodeToken.email,
+        subject: "Change password",
+        purpose: "CHANGE PASSWORD!",
+        firstName: '',
+        lastName: center.name,
+        require: "",
+        success: "",
+        text: null
+      });
+    } else {
+      const sendEmail = await emailService.sendMailAuthencation({
+        receiver: decodeToken.email,
+        subject: "Change password",
+        purpose: "CHANGE PASSWORD!",
+        firstName: user.firstName,
+        lastName: user.lastName,
+        require: "",
+        success: "",
+        text: null
+      });
+    }
 
     res.status(StatusCodes.OK).json({
       success: true,
