@@ -73,9 +73,27 @@ const changeOwner = async function (id, idOwnwer) {
 const filter = async function ({ breed, color, age }) {
   const query = [];
   breed && query.push({ breed: { $regex: breed, $options: "i" } });
-  color && query.push({ color: { $regex: color, $options: "i" } });
-  age && query.push({ age: age });
-  
+
+  if (Array.isArray(color)) {
+    const queryOr = [];
+    color.forEach((element) => {
+      queryOr.push({ color: { $regex: element, $options: "i" } });
+    });
+    query.push({ $or: queryOr });
+  } else {
+    color && query.push({ color: { $regex: color, $options: "i" } });
+  }
+
+  if (Array.isArray(age)) {
+    const queryOr = [];
+    age.forEach((element) => {
+      queryOr.push({ age: element });
+    });
+    query.push({ $or: queryOr });
+  } else {
+    age && query.push({ age: age });
+  }
+
   const pet = await Pet.find({
     $or: [
       { statusAdopt: enums.statusAdopt.NOTHING },
