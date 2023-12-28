@@ -195,12 +195,16 @@ const filterPostAccountActive = async (posts) => {
 
   for (const post of posts) {
     if (post.userId) {
-      const account = await accountService.findAccountById(post.userId.accountId);
+      const account = await accountService.findAccountById(
+        post.userId.accountId
+      );
       if (account && account.status === enums.statusAccount.ACTIVE) {
         postsRT.push(post);
       }
-    }else{
-      const account = await accountService.findAccountById(post.centerId.accountId);
+    } else {
+      const account = await accountService.findAccountById(
+        post.centerId.accountId
+      );
       if (account && account.status === enums.statusAccount.ACTIVE) {
         postsRT.push(post);
       }
@@ -215,20 +219,18 @@ const getAllPost = async (req, res, next) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 15;
     const postsActive = await postService.findPostInfoAllActive(page, limit);
-    
-    // const postsActiveFilter = await filterPostAccountActive(postsActive);
-    // const post = await postService.findPostInfoAll(page, limit);
-    // const postFilter = await filterPostAccountActive(post);
+    const countPost = await postModel.countDocuments({
+      status: enums.statusPost.ACTIVE,
+      statusAccount: "ACTIVE"
+    });
 
-    const totalPages = Math.ceil(postsActive.length / limit);
-    // if (!post) {
-    //   throw new ApiError(StatusCodes.NOT_FOUND, ErrorPost.postNotFound);
-    // }
+    const totalPages = Math.ceil(countPost / limit);
     res.status(StatusCodes.OK).json({
       success: true,
       data: postsActive,
       totalPost: postsActive.length,
-      page: `${page}/${totalPages}`
+      page: page,
+      totalPages: totalPages
     });
   } catch (error) {
     const customError = new ApiError(StatusCodes.BAD_REQUEST, error.message);
