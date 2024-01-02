@@ -85,7 +85,7 @@ const deletePet = async (req, res, next) => {
     if (!pet) {
       throw new ApiError(StatusCodes.NOT_FOUND, ErrorPet.petNotFound);
     }
-    if(pet.status != "NOTHING"){
+    if(pet.statusAdopt != "NOTHING"){
       res.status(StatusCodes.OK).json({
         success: false,
         message: "Pets have been adopted!"
