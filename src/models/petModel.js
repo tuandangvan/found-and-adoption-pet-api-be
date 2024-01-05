@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { enums } from "../enums/enums.js";
+import { Double } from "mongodb";
 
 const petSchema = mongoose.Schema(
   {
@@ -28,9 +29,9 @@ const petSchema = mongoose.Schema(
       require: true
     },
     age: {
-      type: Number,
+      type: String,
       required: true,
-      default: 0
+      default: 1.0
     },
     color: {
       type: String,

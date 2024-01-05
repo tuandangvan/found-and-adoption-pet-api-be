@@ -7,6 +7,7 @@ const createPet = async function ({ data, centerId }) {
   data.centerId = centerId;
   data.level = await setEnum.setLevelPet(data.level);
   data.gender = await setEnum.setGender(data.gender);
+  data.age = data.age.toString();
   const pet = new Pet({
     _id: new mongoose.Types.ObjectId(),
     ...data
