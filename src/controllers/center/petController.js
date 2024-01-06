@@ -161,8 +161,6 @@ const filter = async (req, res, next) => {
   const color = req.query.color || null;
   const age = req.query.age || null;
 
-  console.log(breed, color, age);
-
   try {
     const pets = await petService.filter({breed, color, age});
     res.status(StatusCodes.OK).json({

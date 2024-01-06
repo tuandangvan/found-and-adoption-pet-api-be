@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import Pet from "../models/petModel.js";
 import { setEnum } from "../utils/setEnum.js";
 import { enums } from "../enums/enums.js";
+import { toInteger } from "lodash";
 
 const createPet = async function ({ data, centerId }) {
   data.centerId = centerId;
@@ -73,6 +74,17 @@ const changeOwner = async function (id, idOwnwer) {
 
 const filter = async function ({ breed, color, age }) {
   const query = [];
+  const ageArr = [];
+  for (let i = parseInt(age[0]); i < parseInt(age[1]); i++) {
+    ageArr.push(i.toString() + ".0");
+    for (let j = 1; j < 10; j++) {
+      ageArr.push((i + j / 10).toString());
+    }
+    if (i === parseInt(age[1]) - 1) {
+      ageArr.push(parseInt(age[1]).toString() + ".0");
+    }
+  }
+
   breed && query.push({ breed: { $regex: breed, $options: "i" } });
 
   if (Array.isArray(color)) {
@@ -87,14 +99,14 @@ const filter = async function ({ breed, color, age }) {
 
   if (Array.isArray(age)) {
     const queryOr = [];
-    age.forEach((element) => {
-      queryOr.push({ age: element });
+    ageArr.forEach((element) => {
+      queryOr.push({ age: element.toString() });
     });
     query.push({ $or: queryOr });
   } else {
-    age && query.push({ age: age });
+    age && query.push({ age: age.toString() });
   }
-
+  
   const pet = await Pet.find({
     $or: [
       { statusAdopt: enums.statusAdopt.NOTHING },
@@ -105,6 +117,7 @@ const filter = async function ({ breed, color, age }) {
     .sort({ level: -1 })
     .populate("centerId")
     .populate("foundOwner");
+  // console.log(pet);
 
   return pet;
 };
