@@ -12,24 +12,33 @@ import { validate } from "../../validate/validate.js";
 const createPet = async (req, res, next) => {
   try {
     //validate
-    //validate
     const result = validate.petValidate(req.body);
     if (result.error) {
-      res.status(400).send({success: false, message: result.error.details[0].message });
+      res
+        .status(400)
+        .send({ success: false, message: result.error.details[0].message });
       return;
     }
+
 
     const getToken = await token.getTokenHeader(req);
     const account = verify(getToken, env.JWT_SECRET);
 
     const newPet = await petService.createPet({
       data: req.body,
-      centerId: account.centerId
     });
-    const centerUpdate = await centerService.addPetForCenter({
-      centerId: account.centerId,
-      petId: newPet.id
-    });
+    var centerUpdate = null;
+    if (!req.body.giver) {
+      centerUpdate = await centerService.addPetForCenter({
+        centerId: account.centerId,
+        petId: newPet.id
+      });
+    } else {
+      centerUpdate = await centerService.addPetLinkForCenter({
+        centerId: req.body.linkCenter,
+        petId: newPet.id
+      });
+    }
     if (newPet) {
       res.status(StatusCodes.CREATED).json({
         success: true,
@@ -85,7 +94,7 @@ const deletePet = async (req, res, next) => {
     if (!pet) {
       throw new ApiError(StatusCodes.NOT_FOUND, ErrorPet.petNotFound);
     }
-    if(pet.statusAdopt != "NOTHING"){
+    if (pet.statusAdopt != "NOTHING") {
       res.status(StatusCodes.OK).json({
         success: false,
         message: "Pets have been adopted!"
@@ -155,14 +164,13 @@ const getAllPet = async (req, res, next) => {
   }
 };
 
-
 const filter = async (req, res, next) => {
   const breed = req.query.breed || null;
   const color = req.query.color || null;
   const age = req.query.age || null;
 
   try {
-    const pets = await petService.filter({breed, color, age});
+    const pets = await petService.filter({ breed, color, age });
     res.status(StatusCodes.OK).json({
       success: true,
       data: pets
@@ -171,7 +179,7 @@ const filter = async (req, res, next) => {
     const customError = new ApiError(StatusCodes.BAD_REQUEST, error.message);
     next(customError);
   }
-}
+};
 
 export const petController = {
   createPet,

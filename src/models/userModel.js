@@ -28,6 +28,14 @@ const userSchema = mongoose.Schema(
       type: String,
       default: "Chưa cập nhật"
     },
+    location: {
+      latitude: {
+        type: String,
+      },
+      longitude: {
+        type: String,
+      }
+    },
     avatar: {
       type: String,
       default: "https://res.cloudinary.com/dfaea99ew/image/upload/v1698469989/a1rstfzd5ihov6sqhvck.jpg"

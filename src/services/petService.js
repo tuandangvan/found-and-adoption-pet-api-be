@@ -2,13 +2,13 @@ import mongoose from "mongoose";
 import Pet from "../models/petModel.js";
 import { setEnum } from "../utils/setEnum.js";
 import { enums } from "../enums/enums.js";
-import { toInteger } from "lodash";
 
-const createPet = async function ({ data, centerId }) {
-  data.centerId = centerId;
+const createPet = async function ({ data }) {
   data.level = await setEnum.setLevelPet(data.level);
   data.gender = await setEnum.setGender(data.gender);
   data.age = data.age.toString();
+  data.adoptBy = data.centerId ? "CENTER" : "USER";
+
   const pet = new Pet({
     _id: new mongoose.Types.ObjectId(),
     ...data
@@ -104,9 +104,9 @@ const filter = async function ({ breed, color, age }) {
     });
     query.push({ $or: queryOr });
   } else {
-    age && query.push({ age: age.toString() });
+    age && query.push({ age: age.toString()});
   }
-  
+
   const pet = await Pet.find({
     $or: [
       { statusAdopt: enums.statusAdopt.NOTHING },

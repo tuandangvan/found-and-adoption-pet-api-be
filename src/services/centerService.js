@@ -14,15 +14,17 @@ const updateCenter = async function ({ data, centerId }) {
   const center = await Center.updateOne(
     { _id: centerId },
     {
-      $set: {...data}
+      $set: { ...data }
     }
   );
   return center;
 };
 
-const findCenterByAccountId = async function(accountId){
-    const center = await Center.findOne({accountId: accountId}).populate("accountId");
-    return center;
+const findCenterByAccountId = async function (accountId) {
+  const center = await Center.findOne({ accountId: accountId }).populate(
+    "accountId"
+  );
+  return center;
 };
 
 const addPetForCenter = async function ({ centerId, petId }) {
@@ -30,6 +32,16 @@ const addPetForCenter = async function ({ centerId, petId }) {
     { _id: centerId },
     {
       $push: { petIds: petId }
+    }
+  );
+  return center;
+};
+
+const addPetLinkForCenter = async function ({ centerId, petId }) {
+  const center = await Center.updateOne(
+    { _id: centerId },
+    {
+      $push: { petLinkIds: petId }
     }
   );
   return center;
@@ -46,12 +58,12 @@ const deletePetForCenter = async function ({ centerId, petId }) {
 };
 
 const findCenterById = async function (id) {
-  const center = await Center.findOne({_id: id});
+  const center = await Center.findOne({ _id: id });
   return center;
 };
 
 const findInfoCenterById = async function (id) {
-  const center = await Center.findOne({_id: id}).populate("accountId");
+  const center = await Center.findOne({ _id: id }).populate("accountId");
   return center;
 };
 
@@ -64,6 +76,7 @@ export const centerService = {
   createCenter,
   updateCenter,
   addPetForCenter,
+  addPetLinkForCenter,
   findCenterById,
   findCenterByAccountId,
   deletePetForCenter,

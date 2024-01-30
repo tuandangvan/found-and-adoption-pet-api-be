@@ -45,10 +45,15 @@ const infoCenterValidate = function (data) {
 
 const petValidate = function (data) {
   const schema = Joi.object({
+    centerId: Joi.string().allow(null),
+    giver: Joi.string().allow(null),
+    rescue: Joi.string().allow(null),
+    linkCenter: Joi.string().allow(null),
     namePet: Joi.string().required(),
     petType: Joi.string().required(),
     breed: Joi.string().required(),
-    age: Joi.number(),
+    age: Joi.number().required(),
+    birthday: Joi.date().required(),
     gender: Joi.string()
       .required()
       .valid(enums.genders.MALE, enums.genders.FEMALE, enums.genders.ORTHER),

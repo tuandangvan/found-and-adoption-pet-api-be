@@ -1,6 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 import { enums } from "../enums/enums.js";
-import { Double } from "mongodb";
 
 const petSchema = mongoose.Schema(
   {
@@ -8,7 +7,22 @@ const petSchema = mongoose.Schema(
     centerId: {
       type: Schema.Types.ObjectId,
       ref: "Center",
-      required: true
+      default: null
+    },
+    giver: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      default: null
+    },
+    rescue: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      default: null
+    },
+    linkCenter: {
+      type: Schema.Types.ObjectId,
+      ref: "Center",
+      default: null
     },
     namePet: {
       type: String,
@@ -30,8 +44,11 @@ const petSchema = mongoose.Schema(
     },
     age: {
       type: String,
-      required: true,
       default: 1.0
+    },
+    birthday: {
+      type: Date,
+      default: null
     },
     color: {
       type: String,
@@ -72,7 +89,12 @@ const petSchema = mongoose.Schema(
         enums.statusAdopt.HAS_ONE_OWNER
       ],
       default: enums.statusAdopt.NOTHING
-    }
+    },
+    adoptBy: {
+      type: String,
+      required: true,
+      enum: ["CENTER", "USER"],
+    },
   },
   {
     timestamps: true

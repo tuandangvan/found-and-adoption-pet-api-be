@@ -1,3 +1,4 @@
+import { Double } from "mongodb";
 import mongoose, { Schema } from "mongoose";
 
 const centerSchema = mongoose.Schema(
@@ -13,13 +14,21 @@ const centerSchema = mongoose.Schema(
       required: true,
       trim: true
     },
-    phoneNumber: {
+    phoneDouble: {
       type: String,
       required: true
     },
     address: {
       type: String,
       default: "Chưa cập nhật"
+    },
+    location: {
+      latitude: {
+        type: String,
+      },
+      longitude: {
+        type: String,
+      }
     },
     avatar: {
       type: String,
@@ -33,7 +42,11 @@ const centerSchema = mongoose.Schema(
     petIds: [{ 
         type: Schema.Types.ObjectId, 
         ref: "Pet" 
-    }]
+    }],
+    petLinkIds: [{ 
+        type: Schema.Types.ObjectId, 
+        ref: "Pet" 
+    }],
   },
   {
     timestamps: true

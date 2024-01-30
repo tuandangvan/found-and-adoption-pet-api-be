@@ -19,6 +19,14 @@ const adoptSchema = mongoose.Schema(
       ref: "Pet",
       required: true
     },
+    dateInterview: {
+      type: Date,
+      required: true
+    },
+    dateAdoption: {
+      type: Date,
+      required: true
+    },
     descriptionAdoption: {
       type: String,
       required: true
