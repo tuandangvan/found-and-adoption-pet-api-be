@@ -33,6 +33,9 @@ const deletePet = async function (id) {
 
 const findAllOfCenter = async function (centerId) {
   const pets = await Pet.find({ centerId: centerId })
+    .populate("giver")
+    .populate("rescue")
+    .populate("linkCenter")
     .populate("centerId")
     .populate("foundOwner");
   return pets;
@@ -46,6 +49,9 @@ const findAll = async function () {
     ]
   })
     .sort({ level: -1 })
+    .populate("giver")
+    .populate("rescue")
+    .populate("linkCenter")
     .populate("centerId")
     .populate("foundOwner");
   return pets;
@@ -104,7 +110,7 @@ const filter = async function ({ breed, color, age }) {
     });
     query.push({ $or: queryOr });
   } else {
-    age && query.push({ age: age.toString()});
+    age && query.push({ age: age.toString() });
   }
 
   const pet = await Pet.find({
@@ -115,6 +121,9 @@ const filter = async function ({ breed, color, age }) {
     $and: query
   })
     .sort({ level: -1 })
+    .populate("giver")
+    .populate("rescue")
+    .populate("linkCenter")
     .populate("centerId")
     .populate("foundOwner");
   // console.log(pet);
