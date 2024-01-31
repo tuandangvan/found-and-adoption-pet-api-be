@@ -147,6 +147,7 @@ const signIn = async (req, res, next) => {
         phoneNumber: user.phoneNumber,
         avatar: user.avatar,
         address: user.address,
+        location: user.location,
         refreshToken: refreshToken,
         accessToken: accessToken
       };
@@ -191,6 +192,7 @@ const signIn = async (req, res, next) => {
         avatar: center.avatar,
         phoneNumber: center.phoneNumber,
         address: center.address,
+        location: center.location,
         refreshToken: refreshToken,
         accessToken: accessToken
       };
