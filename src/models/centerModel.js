@@ -1,4 +1,3 @@
-import { Double } from "mongodb";
 import mongoose, { Schema } from "mongoose";
 
 const centerSchema = mongoose.Schema(
@@ -14,7 +13,7 @@ const centerSchema = mongoose.Schema(
       required: true,
       trim: true
     },
-    phoneDouble: {
+    phoneNumber: {
       type: String,
       required: true
     },
