@@ -46,7 +46,25 @@ const findAll = async function () {
     $or: [
       { statusAdopt: enums.statusAdopt.NOTHING },
       { statusAdopt: enums.statusAdopt.ADOPTING }
-    ]
+    ],
+    adoptBy: "CENTER"
+  })
+    .sort({ level: -1 })
+    .populate("giver")
+    .populate("rescue")
+    .populate("linkCenter")
+    .populate("centerId")
+    .populate("foundOwner");
+  return pets;
+};
+
+const findAllPersonal = async function () {
+  const pets = await Pet.find({
+    $or: [
+      { statusAdopt: enums.statusAdopt.NOTHING },
+      { statusAdopt: enums.statusAdopt.ADOPTING }
+    ],
+    adoptBy: "USER"
   })
     .sort({ level: -1 })
     .populate("giver")
@@ -138,6 +156,7 @@ export const petService = {
   findAllOfCenter,
   findPetById,
   findAll,
+  findAllPersonal,
   changeStatus,
   changeOwner,
   filter

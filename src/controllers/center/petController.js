@@ -153,7 +153,21 @@ const getAllPetOfCenterPermission = async (req, res, next) => {
 
 const getAllPet = async (req, res, next) => {
   try {
+    console.log("get all pet");
     const pets = await petService.findAll();
+    res.status(StatusCodes.OK).json({
+      success: true,
+      data: pets
+    });
+  } catch (error) {
+    const customError = new ApiError(StatusCodes.BAD_REQUEST, error.message);
+    next(customError);
+  }
+};
+
+const getAllPetPersonal = async (req, res, next) => {
+  try {
+    const pets = await petService.findAllPersonal();
     res.status(StatusCodes.OK).json({
       success: true,
       data: pets
@@ -188,5 +202,6 @@ export const petController = {
   deletePet,
   getAllPetOfCenterPermission,
   getAllPet,
+  getAllPetPersonal,
   filter
 };
