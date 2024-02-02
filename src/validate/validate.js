@@ -52,7 +52,6 @@ const petValidate = function (data) {
     namePet: Joi.string().required(),
     petType: Joi.string().required(),
     breed: Joi.string().required(),
-    age: Joi.number().required(),
     birthday: Joi.date().required(),
     gender: Joi.string()
       .required()
