@@ -72,6 +72,11 @@ const findAllCenterByIdAD = async function () {
   return center;
 };
 
+const findAllCenter = async function () {
+  const center = await Center.find().select("id name location");
+  return center;
+};
+
 export const centerService = {
   createCenter,
   updateCenter,
@@ -81,5 +86,6 @@ export const centerService = {
   findCenterByAccountId,
   deletePetForCenter,
   findInfoCenterById,
-  findAllCenterByIdAD
+  findAllCenterByIdAD,
+  findAllCenter
 };

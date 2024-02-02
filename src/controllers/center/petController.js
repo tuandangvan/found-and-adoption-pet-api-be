@@ -153,7 +153,6 @@ const getAllPetOfCenterPermission = async (req, res, next) => {
 
 const getAllPet = async (req, res, next) => {
   try {
-    console.log("get all pet");
     const pets = await petService.findAll();
     res.status(StatusCodes.OK).json({
       success: true,
@@ -195,6 +194,19 @@ const filter = async (req, res, next) => {
   }
 };
 
+const getAllCenter = async (req, res, next) => {
+  try {
+    const centers = await centerService.findAllCenter();
+    res.status(StatusCodes.OK).json({
+      success: true,
+      data: centers
+    });
+  } catch (error) {
+    const customError = new ApiError(StatusCodes.BAD_REQUEST, error.message);
+    next(customError);
+  }
+};
+
 export const petController = {
   createPet,
   getAllPetOfCenter,
@@ -203,5 +215,6 @@ export const petController = {
   getAllPetOfCenterPermission,
   getAllPet,
   getAllPetPersonal,
-  filter
+  filter,
+  getAllCenter
 };

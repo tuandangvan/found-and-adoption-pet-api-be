@@ -159,5 +159,5 @@ export const petService = {
   findAllPersonal,
   changeStatus,
   changeOwner,
-  filter
+  filter,
 };
