@@ -6,7 +6,6 @@ import { enums } from "../enums/enums.js";
 const createPet = async function ({ data }) {
   data.level = await setEnum.setLevelPet(data.level);
   data.gender = await setEnum.setGender(data.gender);
-  data.age = data.age.toString();
   data.adoptBy = data.centerId ? "CENTER" : "USER";
 
   const pet = new Pet({
